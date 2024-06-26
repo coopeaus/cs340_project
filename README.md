@@ -7,6 +7,7 @@
 + [Install Requirements](#reqs)
 + [Formatting and Linting](#formatting)
 + [Contributors](#contributors)
++ [README Citation](#citation)
 
 ## Overview<a name="overview"></a>
 Tbd
@@ -100,3 +101,6 @@ This project uses black for formatting, and flake8 for linting.
 # Contributors<a name="contributors"></a>
 - Wei-Yin Chen `Creativity Officer, Ed Discussion liaison and Submission Proofreader`
 - Austin Cooper `Team Leader, Researcher, and Deadline Enforcer`
+
+# README Citation<a name="citation"></a>
+Last term, Austin Cooper created a portion of this README ([Requirements](#requirements), [Setting Up Python Virtual Environment](#venv), [Install Requirements](#reqs)) for Socket Programming Project 3 in CS372. That README is not available on any public repo. This is very general, common-knowledge information so should be permissible per https://canvas.oregonstate.edu/courses/1967354/pages/common-scenarios?module_item_id=24460772
