@@ -1,13 +1,14 @@
 from flask import Flask, render_template
 
 # Citation for the below config, Routes, and Listener
-# Date: 7/23/24 
+# Date: 7/23/24
 # Adapted from:
 # The main idea and organization was adapted from:
 # Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
 
 # Configuration
 app = Flask(__name__)
+
 
 # Routes
 @app.route("/")
