@@ -10,5 +10,28 @@
         {% include "_nav.j2" %}
     </header>
     <h1>Students</h1>
+    <div id="browse">
+        <p><a href="#">Add New</a></p>
+        <table>
+            <thead>
+                <tr>
+                {% for key in students[0].keys() %}
+                    <th>{{ key }}</th>
+                {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for student in students %}
+                <tr>
+                {% for key in students[0].keys() %}
+                    <td>{{ student[key] }}</td>
+                {% endfor %}
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <p>&nbsp;</p>
+    </div>  <!-- browse -->
+
 </body>
 </html>
