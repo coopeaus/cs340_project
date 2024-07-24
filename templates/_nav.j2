@@ -1,0 +1,13 @@
+<!--
+Citation for the below navbar
+Date: 7/23/2024
+Adapted from:
+Idea for using a for loop came from Jinja docs
+Source URL: https://jinja.palletsprojects.com/en/3.0.x/templates/
+-->
+
+<nav>
+{% for page in ["Home", "Students", "Professors", "Houses", "Subjects", "Classes"] %}
+    <a href="{{ url_for(page.lower()) }}">{{ page }}</a>
+{% endfor %}
+</nav>
