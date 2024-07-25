@@ -1,0 +1,51 @@
+{% from 'bootstrap5/form.html' import render_form %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %} {{ title }} {% endblock title %}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+</head>
+<body>
+    <header>
+        {% include "_nav.j2" %}
+    </header>
+    <h1>{{ title }}</h1>
+    {% block show_table %}
+    <div class="container">
+        <p>
+            <table>
+                <thead>
+                    <tr>
+                    {% for key in records[0].keys() %}
+                        <th>{{ key }}</th>
+                    {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for record in records %}
+                    <tr>
+                    {% for key in records[0].keys() %}
+                        <td>{{ record[key] }}</td>
+                    {% endfor %}
+                    {% for operation in ["Edit", "Delete"]%}
+                        <td><a href="#">{{ operation }}</a></td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </p>
+        <p>&nbsp;</p>
+    </div>  <!-- browse -->
+    {% endblock show_table %}
+    
+    {% block show_forms %}
+    {% endblock show_forms %}
+    
+    {% block show_table2 %}
+    {% endblock show_table2 %}
+</body>
+</html>

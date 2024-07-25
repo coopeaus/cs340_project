@@ -1,37 +1,47 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Students</title>
-</head>
-<body>
-    <header>
-        {% include "_nav.j2" %}
-    </header>
-    <h1>Students</h1>
-    <div id="browse">
-        <p><a href="#">Add New</a></p>
-        <table>
-            <thead>
-                <tr>
-                {% for key in students[0].keys() %}
-                    <th>{{ key }}</th>
-                {% endfor %}
-                </tr>
-            </thead>
-            <tbody>
-            {% for student in students %}
-                <tr>
-                {% for key in students[0].keys() %}
-                    <td>{{ student[key] }}</td>
-                {% endfor %}
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <p>&nbsp;</p>
-    </div>  <!-- browse -->
+{% extends "base_template.j2" %}
 
-</body>
-</html>
+<title>{% block title %} Students {% endblock title %}</title>
+
+{% block show_forms %}
+
+    <div class="container">
+        <div class="form-row align-items-center">
+            <div class="form-group col-auto">
+                {{ enroll_form.first_name.label(class="form-label") }}
+                {{ enroll_form.first_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ enroll_form.last_name.label(class="form-label") }}
+                {{ enroll_form.last_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ enroll_form.house_id.label(class="form-label") }}
+                {{ enroll_form.house_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ enroll_form.grade_level.label(class="form-label") }}
+                {{ enroll_form.grade_level(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ enroll_form.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="form-row align-items-center">
+            <div class="form-group col-auto">
+                {{ find_form.first_name.label(class="form-label") }}
+                {{ find_form.first_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ find_form.last_name.label(class="form-label") }}
+                {{ find_form.last_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ find_form.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+{% endblock show_forms %}

@@ -1,14 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Classes</title>
-</head>
-<body>
-    <header>
-        {% include "_nav.j2" %}
-    </header>
-    <h1>Classes</h1>
-</body>
-</html>
+{% extends "base_template.j2" %}
+
+<title>{% block title %} Classes {% endblock title %}</title>
+
+{% block show_table2 %}
+    <h1>Class Registrations</h1>
+        <p>
+            {% for button in buttons2 %}
+                <a href="#">{{ button }}</a>
+            {% endfor %}
+        </p
+        <p>
+            <table>
+                <thead>
+                    <tr>
+                    {% for key in class_registrations[0].keys() %}
+                        <th>{{ key }}</th>
+                    {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for registration in class_registrations %}
+                    <tr>
+                    {% for key in class_registrations[0].keys() %}
+                        <td>{{ registration[key] }}</td>
+                    {% endfor %}
+                    {% for operation in ["Edit", "Delete"]%}
+                        <td><a href="#">{{ operation }}</a></td>
+                    {% endfor %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </p>
+        <p>&nbsp;</p>
+    </div>  <!-- browse -->
+{% endblock show_table2 %}

@@ -1,9 +1,12 @@
 black==24.4.2
 blinker==1.8.2
+Bootstrap-Flask==2.4.0
 click==8.1.7
 flake8==7.1.0
 Flask==3.0.3
 Flask-MySQLdb==2.0.0
+Flask-WTF==1.2.1
+gunicorn==22.0.0
 importlib_metadata==8.0.0
 itsdangerous==2.2.0
 Jinja2==3.1.4
@@ -19,4 +22,5 @@ pyflakes==3.2.0
 tomli==2.0.1
 typing_extensions==4.12.2
 Werkzeug==3.0.3
+WTForms==3.1.2
 zipp==3.19.2
