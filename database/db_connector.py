@@ -1,6 +1,11 @@
 import MySQLdb
 from database.db_credentials import host, user, passwd, db
 
+# Citation for db_connector.py
+# Date: 7/24/24
+# Copied from
+# Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
+
 # import os
 # from dotenv import load_dotenv, find_dotenv
 
@@ -65,12 +70,12 @@ def execute_query(db_connection=None, query=None, query_params=()):
     return cursor
 
 
-if __name__ == "__main__":
-    print("Executing a sample query on the database")
-    db = connect_to_database()
-    query = "SELECT * from Students;"
-    results = execute_query(db, query)
-    print("Printing results of %s" % query)
+# if __name__ == "__main__":
+#     print("Executing a sample query on the database")
+#     db = connect_to_database()
+#     query = "SELECT * from Students;"
+#     results = execute_query(db, query)
+#     print("Printing results of %s" % query)
 
-    for r in results.fetchall():
-        print(r)
+#     for r in results.fetchall():
+#         print(r)

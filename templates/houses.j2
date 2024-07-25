@@ -1,14 +1,3 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Houses</title>
-</head>
-<body>
-    <header>
-        {% include "_nav.j2" %}
-    </header>
-    <h1>Houses</h1>
-</body>
-</html>
+{% extends "base_template.j2" %}
+
+<title>{% block title %} Houses {% endblock title %}</title>

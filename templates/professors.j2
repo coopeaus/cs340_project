@@ -1,14 +1,23 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Professors</title>
-</head>
-<body>
-    <header>
-        {% include "_nav.j2" %}
-    </header>
-    <h1>Professors</h1>
-</body>
-</html>
+{% extends "base_template.j2" %}
+
+<title>{% block title %} Professors {% endblock title %}</title>
+
+{% block show_forms %}
+
+    <div class="container">
+        <div class="form-row align-items-center">
+            <div class="form-group col-auto">
+                {{ new_prof.first_name.label(class="form-label") }}
+                {{ new_prof.first_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ new_prof.last_name.label(class="form-label") }}
+                {{ new_prof.last_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ new_prof.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+{% endblock show_forms %}
