@@ -89,7 +89,7 @@ def subjects():
         "update_form": custom_forms.UpdateSubjectForm(),
         "delete_form": custom_forms.DeleteSubjectForm(),
     }
-    return render_template("subjects.j2",  **values)
+    return render_template("subjects.j2", **values)
 
 
 @app.route("/classes")
