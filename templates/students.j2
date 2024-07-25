@@ -5,6 +5,7 @@
 {% block show_forms %}
 
     <div class="container">
+        <h2>Add Student</h2>
         <div class="form-row align-items-center">
             <div class="form-group col-auto">
                 {{ enroll_form.first_name.label(class="form-label") }}
@@ -29,6 +30,7 @@
     </div>
 
     <div class="container">
+        <h2>Find Student</h2>
         <div class="form-row align-items-center">
             <div class="form-group col-auto">
                 {{ find_form.first_name.label(class="form-label") }}
@@ -44,4 +46,62 @@
         </div>
     </div>
 
+    <div class="container">
+        <h2>Update Student</h2>
+        <div class="form-row align-items-center">
+            <div class="form-group col-auto">
+                {{ update_form.student_id.label(class="form-label") }}
+                {{ update_form.student_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.first_name.label(class="form-label") }}
+                {{ update_form.first_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.last_name.label(class="form-label") }}
+                {{ update_form.last_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.house_id.label(class="form-label") }}
+                {{ update_form.house_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.grade_level.label(class="form-label") }}
+                {{ update_form.grade_level(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ update_form.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Delete Student</h2>
+        <p>Are you sure you wish to delete the following?</p>
+        <div class="form-row align-items-center">
+            <div class="form-group col-auto">
+                {{ delete_form.student_id.label(class="form-label") }}
+                {{ delete_form.student_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ delete_form.first_name.label(class="form-label") }}
+                {{ delete_form.first_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ delete_form.last_name.label(class="form-label") }}
+                {{ delete_form.last_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ delete_form.house_id.label(class="form-label") }}
+                {{ delete_form.house_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ delete_form.grade_level.label(class="form-label") }}
+                {{ delete_form.grade_level(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ delete_form.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
 {% endblock show_forms %}

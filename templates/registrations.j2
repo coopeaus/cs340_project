@@ -1,0 +1,54 @@
+{% extends "base_template.j2" %}
+
+<title>{% block title %} Class Registrations {% endblock title %}</title>
+
+{% block show_forms %}
+
+    <p>
+        {% for button in buttons %}
+            <a href="#">{{ button }}</a>
+        {% endfor %}
+    </p>
+
+    <div class="container">
+        <h2>Add Registration</h2>
+        <div class="form-row align-items-center">
+            <div class="form-group col-auto">
+                {{ new_reg.student_id.label(class="form-label") }}
+                {{ new_reg.student_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ new_reg.class_id.label(class="form-label") }}
+                {{ new_reg.class_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ new_reg.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Delete Registration</h2>
+        <p>Are you sure you wish to delete the following?</p>
+        <div class="form-row align-items-center">
+            <div class="form-group col-auto">
+                {{ delete_form.student_id.label(class="form-label") }}
+                {{ delete_form.student_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ delete_form.class_id.label(class="form-label") }}
+                {{ delete_form.class_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ delete_form.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+{% endblock show_forms %}
+
+{% block show_table2 %}
+
+
+
+{% endblock show_table2 %}
