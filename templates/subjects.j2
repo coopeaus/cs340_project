@@ -1,3 +1,67 @@
 {% extends "base_template.j2" %}
 
 <title>{% block title %} Subjects {% endblock title %}</title>
+
+{% block show_forms %}
+
+    <div class="container">
+        <h2>Add Subject</h2>
+        <div class="form-row align-items-center">
+            <div class="form-group col-auto">
+                {{ new_sub.subject_name.label(class="form-label") }}
+                {{ new_sub.subject_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ new_sub.core_elective.label(class="form-label") }}
+                {{ new_sub.core_elective(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ new_sub.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Update Subject</h2>
+        <div class="form-row align-items-center">
+            <div class="form-group col-auto">
+                {{ update_form.subject_id.label(class="form-label") }}
+                {{ update_form.subject_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.subject_name.label(class="form-label") }}
+                {{ update_form.subject_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.core_elective.label(class="form-label") }}
+                {{ update_form.core_elective(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ update_form.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Delete Subject</h2>
+        <p>Are you sure you wish to delete the following?</p>
+        <div class="form-row align-items-center">
+            <div class="form-group col-auto">
+                {{ delete_form.subject_id.label(class="form-label") }}
+                {{ delete_form.subject_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ delete_form.subject_name.label(class="form-label") }}
+                {{ delete_form.subject_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ delete_form.core_elective.label(class="form-label") }}
+                {{ delete_form.core_elective(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ delete_form.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+{% endblock show_forms %}

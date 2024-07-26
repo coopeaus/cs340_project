@@ -2,36 +2,78 @@
 
 <title>{% block title %} Classes {% endblock title %}</title>
 
-{% block show_table2 %}
-    <h1>Class Registrations</h1>
-        <p>
-            {% for button in buttons2 %}
-                <a href="#">{{ button }}</a>
-            {% endfor %}
-        </p
-        <p>
-            <table>
-                <thead>
-                    <tr>
-                    {% for key in class_registrations[0].keys() %}
-                        <th>{{ key }}</th>
-                    {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                {% for registration in class_registrations %}
-                    <tr>
-                    {% for key in class_registrations[0].keys() %}
-                        <td>{{ registration[key] }}</td>
-                    {% endfor %}
-                    {% for operation in ["Edit", "Delete"]%}
-                        <td><a href="#">{{ operation }}</a></td>
-                    {% endfor %}
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-        </p>
-        <p>&nbsp;</p>
-    </div>  <!-- browse -->
-{% endblock show_table2 %}
+{% block show_forms %}
+
+    <div class="container">
+        <h2>Add Class</h2>
+        <div class="form-row align-items-center">
+            <div class="form-group col-auto">
+                {{ new_class.subject_id.label(class="form-label") }}
+                {{ new_class.subject_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ new_class.professor_id.label(class="form-label") }}
+                {{ new_class.professor_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ new_class.class_level.label(class="form-label") }}
+                {{ new_class.class_level(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ new_class.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Update Class</h2>
+        <div class="form-row align-items-center">
+            <div class="form-group col-auto">
+                {{ update_form.class_id.label(class="form-label") }}
+                {{ update_form.class_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.subject_id.label(class="form-label") }}
+                {{ update_form.subject_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.professor_id.label(class="form-label") }}
+                {{ update_form.professor_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.class_level.label(class="form-label") }}
+                {{ update_form.class_level(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ update_form.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2>Delete Class</h2>
+        <p>Are you sure you wish to delete the following?</p>
+        <div class="form-row align-items-center">
+            <div class="form-group col-auto">
+                {{ delete_form.class_id.label(class="form-label") }}
+                {{ delete_form.class_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ delete_form.subject_id.label(class="form-label") }}
+                {{ delete_form.subject_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ delete_form.professor_id.label(class="form-label") }}
+                {{ delete_form.professor_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ delete_form.class_level.label(class="form-label") }}
+                {{ delete_form.class_level(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ delete_form.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+{% endblock show_forms %}
