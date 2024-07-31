@@ -45,7 +45,8 @@ def students():
             last_name = form.last_name.data
             house_id = form.house_id.data
             level_attending = form.level_attending.data
-            query = "INSERT INTO Students (first_name, last_name, house_id, level_attending) VALUES (%s, %s,%s,%s)"
+            query = ("INSERT INTO Students (first_name, last_name, house_id, "
+                     "level_attending) VALUES (%s, %s,%s,%s)")
             cursor = db.execute_query(
                 db_connection=db_connection,
                 query=query,
