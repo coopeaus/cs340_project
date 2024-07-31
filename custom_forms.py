@@ -110,7 +110,7 @@ class UpdateSubjectForm(FlaskForm):
 
 
 # class DeleteSubjectForm(FlaskForm):
-#     subject_id = SelectField("Subject ID #", choices=[i for i in range(1, 13)])
+#     subject_id = SelectField("Subject ID #", choices=[i for i in range(1, 13)])  # noqa: E501
 #     subject_name = StringField("Subject Name:")
 #     core_elective = SelectField("Core(1)/Elective(0)", choices=[0, 1])
 #     submit = SubmitField("Delete Subject")
@@ -137,11 +137,11 @@ class UpdateClassForm(FlaskForm):
 
 # class DeleteClassForm(FlaskForm):
 #     class_id = SelectField("Class ID #", choices=[i for i in range(1, 21)])
-#     subject_id = SelectField("Subject ID #", choices=[i for i in range(1, 13)])
+#     subject_id = SelectField("Subject ID #", choices=[i for i in range(1, 13)])  # noqa: E501
 #     professor_id = SelectField(
 #         "Professor ID #", choices=[i for i in range(1, 5)]
 #     )
-#     class_level = SelectField("Class Level", choices=[i for i in range(1, 8)])
+#     class_level = SelectField("Class Level", choices=[i for i in range(1, 8)])  # noqa: E501
 #     submit = SubmitField("Delete Class")
 
 
@@ -152,6 +152,6 @@ class NewRegistrationForm(FlaskForm):
 
 
 # class DeleteRegistrationForm(FlaskForm):
-#     student_id = SelectField("Student ID #", choices=[i for i in range(1, 14)])
+#     student_id = SelectField("Student ID #", choices=[i for i in range(1, 14)])  # noqa: E501
 #     class_id = SelectField("Class ID #", choices=[i for i in range(1, 21)])
 #     submit = SubmitField("Delete Registration")
