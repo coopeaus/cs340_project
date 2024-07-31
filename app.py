@@ -49,7 +49,7 @@ def students():
             "enroll_form": custom_forms.NewStudentForm(),
             "find_form": custom_forms.LookupStudentForm(),
             "update_form": custom_forms.UpdateStudentForm(),
-            "delete_form": custom_forms.DeleteStudentForm(),
+            # "delete_form": custom_forms.DeleteStudentForm(),
         }
         return render_template("students.j2", **values)
     except MySQLdb.Error as e:
@@ -74,7 +74,7 @@ def professors():
             "records": professors,
             "new_prof": custom_forms.NewProfessorForm(),
             "update_form": custom_forms.UpdateProfessorForm(),
-            "delete_form": custom_forms.DeleteProfessorForm(),
+            # "delete_form": custom_forms.DeleteProfessorForm(),
         }
         return render_template("professors.j2", **values)
     except MySQLdb.Error as e:
@@ -99,7 +99,7 @@ def houses():
             "records": houses,
             "new_house": custom_forms.NewHouseForm(),
             "update_form": custom_forms.UpdateHouseForm(),
-            "delete_form": custom_forms.DeleteHouseForm(),
+            # "delete_form": custom_forms.DeleteHouseForm(),
         }
         return render_template("houses.j2", **values)
     except MySQLdb.Error as e:
@@ -124,7 +124,7 @@ def subjects():
             "records": subjects,
             "new_sub": custom_forms.NewSubjectForm(),
             "update_form": custom_forms.UpdateSubjectForm(),
-            "delete_form": custom_forms.DeleteSubjectForm(),
+            # "delete_form": custom_forms.DeleteSubjectForm(),
         }
         return render_template("subjects.j2", **values)
     except MySQLdb.Error as e:
@@ -149,7 +149,7 @@ def classes():
             "records": classes,
             "new_class": custom_forms.NewClassForm(),
             "update_form": custom_forms.UpdateClassForm(),
-            "delete_form": custom_forms.DeleteClassForm(),
+            # "delete_form": custom_forms.DeleteClassForm(),
         }
         return render_template("classes.j2", **values)
     except MySQLdb.Error as e:
@@ -176,7 +176,7 @@ def registrations():
                 "Find Class Registrations for a Student",
             ],
             "new_reg": custom_forms.NewRegistrationForm(),
-            "delete_form": custom_forms.DeleteRegistrationForm(),
+            # "delete_form": custom_forms.DeleteRegistrationForm(),
         }
         return render_template("registrations.j2", **values)
     except MySQLdb.Error as e:

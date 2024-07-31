@@ -58,34 +58,4 @@
         </div>
     </div>
 
-    <div class="container">
-        <h2>Delete House</h2>
-        <p>Are you sure you wish to delete the following?</p>
-        <div class="form-row align-items-center">
-            <div class="form-group col-auto">
-                {{ delete_form.house_id.label(class="form-label") }}
-                {{ delete_form.house_id(class="form-control") }}
-            </div>
-            <div class="form-group col-auto">
-                {{ delete_form.head_of_house.label(class="form-label") }}
-                {{ delete_form.head_of_house(class="form-control") }}
-            </div>
-            <div class="form-group col-auto">
-                {{ delete_form.house_name.label(class="form-label") }}
-                {{ delete_form.house_name(class="form-control") }}
-            </div>
-            <div class="form-group col-auto">
-                {{ delete_form.house_animal.label(class="form-label") }}
-                {{ delete_form.house_animal(class="form-control") }}
-            </div>
-            <div class="form-group col-auto">
-                {{ delete_form.house_colors.label(class="form-label") }}
-                {{ delete_form.house_colors(class="form-control") }}
-            </div>
-            <div class="form-group col-auto pt-4">
-                {{ delete_form.submit(class="btn btn-primary") }}
-            </div>
-        </div>
-    </div>
-
 {% endblock show_forms %}

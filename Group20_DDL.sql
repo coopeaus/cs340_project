@@ -71,7 +71,7 @@ CREATE OR REPLACE TABLE Subjects (
 CREATE OR REPLACE TABLE Classes (
     class_id int(11) NOT NULL UNIQUE AUTO_INCREMENT,
     subject_id int(11) NOT NULL,
-    professor_id int(11) NOT NULL,
+    professor_id int(11),
     class_level int(11) NOT NULL,
     PRIMARY KEY (class_id),
     FOREIGN KEY (subject_id) REFERENCES Subjects(subject_id) ON DELETE CASCADE,
