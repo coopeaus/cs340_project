@@ -45,7 +45,7 @@ INSERT INTO Classes (subject_id, professor_id, class_level) VALUES (:subidInput,
 SELECT class_id, subject_id, class_level FROM Classes WHERE class_id = :class_ID_selected_from_classes_page
 
 -- delete a class
-DELETE FROM Classs WHERE class_id = :class_ID_selected_from_classes_page
+DELETE FROM Classes WHERE class_id = :class_ID_selected_from_classes_page
 
 -- add a registration
 INSERT INTO Class_Registrations (student_id, class_id) VALUES (:sidInput, :cidInput)

@@ -55,13 +55,13 @@ class UpdateProfessorForm(FlaskForm):
     submit = SubmitField("Update Professor")
 
 
-class DeleteProfessorForm(FlaskForm):
-    professor_id = SelectField(
-        "Professor ID #", choices=[i for i in range(1, 5)]
-    )
-    first_name = StringField("First Name:")
-    last_name = StringField("Last Name:")
-    submit = SubmitField("Delete Professor")
+# class DeleteProfessorForm(FlaskForm):
+#     professor_id = SelectField(
+#         "Professor ID #", choices=[i for i in range(1, 5)]
+#     )
+#     first_name = StringField("First Name:")
+#     last_name = StringField("Last Name:")
+#     submit = SubmitField("Delete Professor")
 
 
 class NewHouseForm(FlaskForm):
@@ -85,15 +85,15 @@ class UpdateHouseForm(FlaskForm):
     submit = SubmitField("Update House")
 
 
-class DeleteHouseForm(FlaskForm):
-    house_id = SelectField("House ID #", choices=[1, 2, 3, 4])
-    head_of_house = SelectField(
-        "Head of House", choices=[i for i in range(1, 5)]
-    )
-    house_name = StringField("House Name:")
-    house_animal = StringField("House Animal:")
-    house_colors = StringField("House Colors:")
-    submit = SubmitField("Delete House")
+# class DeleteHouseForm(FlaskForm):
+#     house_id = SelectField("House ID #", choices=[1, 2, 3, 4])
+#     head_of_house = SelectField(
+#         "Head of House", choices=[i for i in range(1, 5)]
+#     )
+#     house_name = StringField("House Name:")
+#     house_animal = StringField("House Animal:")
+#     house_colors = StringField("House Colors:")
+#     submit = SubmitField("Delete House")
 
 
 class NewSubjectForm(FlaskForm):
@@ -109,11 +109,11 @@ class UpdateSubjectForm(FlaskForm):
     submit = SubmitField("Update Subject")
 
 
-class DeleteSubjectForm(FlaskForm):
-    subject_id = SelectField("Subject ID #", choices=[i for i in range(1, 13)])
-    subject_name = StringField("Subject Name:")
-    core_elective = SelectField("Core(1)/Elective(0)", choices=[0, 1])
-    submit = SubmitField("Delete Subject")
+# class DeleteSubjectForm(FlaskForm):
+#     subject_id = SelectField("Subject ID #", choices=[i for i in range(1, 13)])
+#     subject_name = StringField("Subject Name:")
+#     core_elective = SelectField("Core(1)/Elective(0)", choices=[0, 1])
+#     submit = SubmitField("Delete Subject")
 
 
 class NewClassForm(FlaskForm):
@@ -135,14 +135,14 @@ class UpdateClassForm(FlaskForm):
     submit = SubmitField("Update Class")
 
 
-class DeleteClassForm(FlaskForm):
-    class_id = SelectField("Class ID #", choices=[i for i in range(1, 21)])
-    subject_id = SelectField("Subject ID #", choices=[i for i in range(1, 13)])
-    professor_id = SelectField(
-        "Professor ID #", choices=[i for i in range(1, 5)]
-    )
-    class_level = SelectField("Class Level", choices=[i for i in range(1, 8)])
-    submit = SubmitField("Delete Class")
+# class DeleteClassForm(FlaskForm):
+#     class_id = SelectField("Class ID #", choices=[i for i in range(1, 21)])
+#     subject_id = SelectField("Subject ID #", choices=[i for i in range(1, 13)])
+#     professor_id = SelectField(
+#         "Professor ID #", choices=[i for i in range(1, 5)]
+#     )
+#     class_level = SelectField("Class Level", choices=[i for i in range(1, 8)])
+#     submit = SubmitField("Delete Class")
 
 
 class NewRegistrationForm(FlaskForm):
@@ -151,7 +151,7 @@ class NewRegistrationForm(FlaskForm):
     submit = SubmitField("Add New Registration")
 
 
-class DeleteRegistrationForm(FlaskForm):
-    student_id = SelectField("Student ID #", choices=[i for i in range(1, 14)])
-    class_id = SelectField("Class ID #", choices=[i for i in range(1, 21)])
-    submit = SubmitField("Delete Registration")
+# class DeleteRegistrationForm(FlaskForm):
+#     student_id = SelectField("Student ID #", choices=[i for i in range(1, 14)])
+#     class_id = SelectField("Class ID #", choices=[i for i in range(1, 21)])
+#     submit = SubmitField("Delete Registration")
