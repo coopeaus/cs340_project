@@ -46,7 +46,16 @@ def students():
             house_id = form.house_id.data
             level_attending = form.level_attending.data
             query = "INSERT INTO Students (first_name, last_name, house_id, level_attending) VALUES (%s, %s,%s,%s)"
-            cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(first_name, last_name, house_id, level_attending))
+            cursor = db.execute_query(
+                db_connection=db_connection,
+                query=query,
+                query_params=(
+                    first_name,
+                    last_name,
+                    house_id,
+                    level_attending,
+                ),
+            )
             return redirect("/students")
         except MySQLdb.Error as e:
             # Catch and display any DB errors
@@ -90,7 +99,9 @@ def delete_student(id):
     try:
         db_connection = db.connect_to_database()
         query = "DELETE FROM Students WHERE student_id = '%s';"
-        cursor = db.execute_query(db_connection=db_connection, query=query, query_params=(id,))
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(id,)
+        )
         return redirect("/students")
     except MySQLdb.Error as e:
         return e
