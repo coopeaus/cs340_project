@@ -6,7 +6,8 @@
 
     <div class="container">
         <h2>Add Student</h2>
-        <div class="form-row align-items-center">
+        <form action="/students" method="post" class="form-row align-items-center">
+            {{ enroll_form.csrf_token }}
             <div class="form-group col-auto">
                 {{ enroll_form.first_name.label(class="form-label") }}
                 {{ enroll_form.first_name(class="form-control") }}
@@ -20,13 +21,13 @@
                 {{ enroll_form.house_id(class="form-control") }}
             </div>
             <div class="form-group col-auto">
-                {{ enroll_form.grade_level.label(class="form-label") }}
-                {{ enroll_form.grade_level(class="form-control") }}
+                {{ enroll_form.level_attending.label(class="form-label") }}
+                {{ enroll_form.level_attending(class="form-control") }}
             </div>
             <div class="form-group col-auto pt-4">
                 {{ enroll_form.submit(class="btn btn-primary") }}
             </div>
-        </div>
+        </form>
     </div>
 
     <div class="container">
@@ -66,8 +67,8 @@
                 {{ update_form.house_id(class="form-control") }}
             </div>
             <div class="form-group col-auto">
-                {{ update_form.grade_level.label(class="form-label") }}
-                {{ update_form.grade_level(class="form-control") }}
+                {{ update_form.level_attending.label(class="form-label") }}
+                {{ update_form.level_attending(class="form-control") }}
             </div>
             <div class="form-group col-auto pt-4">
                 {{ update_form.submit(class="btn btn-primary") }}

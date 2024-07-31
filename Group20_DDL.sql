@@ -179,7 +179,7 @@ VALUES
 (4, 4, 5);
 
 --
--- Dumping data for table `Class_Registration`
+-- Dumping data for table `Class_Registrations`
 --
 
 INSERT INTO Class_Registrations (student_id, class_id)

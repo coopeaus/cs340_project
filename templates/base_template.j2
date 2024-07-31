@@ -30,9 +30,8 @@
                     {% for key in records[0].keys() %}
                         <td>{{ record[key] }}</td>
                     {% endfor %}
-                    {% for operation in ["Edit", "Delete"]%}
-                        <td><a href="#">{{ operation }}</a></td>
-                    {% endfor %}
+                        <td><a href="#">{{ "Edit" }}</a></td>
+                        <td><a href="delete_{{ title }}/{{ record[fkey] }}">{{ "Delete" }}</a></td>
                     </tr>
                 {% endfor %}
                 </tbody>
