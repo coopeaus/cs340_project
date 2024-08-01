@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 from flask_bootstrap import Bootstrap5
 from flask_wtf import CSRFProtect
 import MySQLdb
@@ -30,33 +30,85 @@ def home():
     return render_template("index.j2")
 
 
-@app.route("/students")
+@app.route("/students", methods=["post", "get"])
 def students():
     """Displays the Students page and associated CRUD operations"""
+    form = custom_forms.NewStudentForm(request.form)
+    if request.method == "POST":
+        try:
+            # We were having connection issues, so decided
+            # to renew the DB connection on each request.
+            # Per the MySQLdb library docs, the cursor should be closed
+            # at a minimum each time.
+            db_connection = db.connect_to_database()
+            first_name = form.first_name.data
+            last_name = form.last_name.data
+            house_id = form.house_id.data
+            level_attending = form.level_attending.data
+            query = (
+                "INSERT INTO Students (first_name, last_name, house_id, "
+                "level_attending) VALUES (%s, %s,%s,%s)"
+            )
+            cursor = db.execute_query(
+                db_connection=db_connection,
+                query=query,
+                query_params=(
+                    first_name,
+                    last_name,
+                    house_id,
+                    level_attending,
+                ),
+            )
+            return redirect("/students")
+        except MySQLdb.Error as e:
+            # Catch and display any DB errors
+            return e
+        finally:
+            # Close the cursor and connection each time.
+            cursor.close()
+            db_connection.close()
+    else:
+        try:
+            # We were having connection issues, so decided
+            # to renew the DB connection on each request.
+            # Per the MySQLdb library docs, the cursor should be closed
+            # at a minimum each time.
+            db_connection = db.connect_to_database()
+            query = "SELECT * FROM Students;"
+            cursor = db.execute_query(db_connection=db_connection, query=query)
+            students = cursor.fetchall()
+            # Structured these into a dictionary, to pass in as **kwargs
+            values = {
+                "title": "Students",
+                "records": students,
+                "fkey": list(students[0].keys())[0],
+                "enroll_form": custom_forms.NewStudentForm(),
+                "find_form": custom_forms.LookupStudentForm(),
+                "update_form": custom_forms.UpdateStudentForm(),
+                # "delete_form": custom_forms.DeleteStudentForm(),
+            }
+            return render_template("students.j2", **values)
+        except MySQLdb.Error as e:
+            # Catch and display any DB errors
+            return e
+        finally:
+            # Close the cursor and connection each time.
+            cursor.close()
+            db_connection.close()
+
+
+@app.route("/delete_Students/<int:id>")
+def delete_student(id):
     try:
-        # We were having connection issues, so decided
-        # to renew the DB connection on each request.
-        # Per the MySQLdb library docs, the cursor should be closed
-        # at a minimum each time.
         db_connection = db.connect_to_database()
-        query = "SELECT * FROM Students;"
-        cursor = db.execute_query(db_connection=db_connection, query=query)
-        students = cursor.fetchall()
-        # Structured these into a dictionary, to pass in as **kwargs
-        values = {
-            "title": "Students",
-            "records": students,
-            "enroll_form": custom_forms.NewStudentForm(),
-            "find_form": custom_forms.LookupStudentForm(),
-            "update_form": custom_forms.UpdateStudentForm(),
-            # "delete_form": custom_forms.DeleteStudentForm(),
-        }
-        return render_template("students.j2", **values)
+        query = "DELETE FROM Students WHERE student_id = '%s';"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(id,)
+        )
+        return redirect("/students")
     except MySQLdb.Error as e:
-        # Catch and display any DB errors
         return e
     finally:
-        # Close the cursor and connection each time.
         cursor.close()
         db_connection.close()
 

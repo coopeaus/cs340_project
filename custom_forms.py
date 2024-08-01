@@ -6,7 +6,7 @@ class NewStudentForm(FlaskForm):
     first_name = StringField("First Name:")
     last_name = StringField("Last Name:")
     house_id = SelectField("House ID #", choices=[1, 2, 3, 4])
-    grade_level = SelectField(
+    level_attending = SelectField(
         "Level Attending", choices=[i for i in range(1, 8)]
     )
     submit = SubmitField("Enroll New Student")
@@ -23,7 +23,7 @@ class UpdateStudentForm(FlaskForm):
     first_name = StringField("First Name:")
     last_name = StringField("Last Name:")
     house_id = SelectField("House ID #", choices=[1, 2, 3, 4])
-    grade_level = SelectField(
+    level_attending = SelectField(
         "Level Attending", choices=[i for i in range(1, 8)]
     )
     submit = SubmitField("Update Student")
@@ -34,7 +34,7 @@ class DeleteStudentForm(FlaskForm):
     first_name = StringField("First Name:")
     last_name = StringField("Last Name:")
     house_id = SelectField("House ID #", choices=[1, 2, 3, 4])
-    grade_level = SelectField(
+    level_attending = SelectField(
         "Level Attending", choices=[i for i in range(1, 8)]
     )
     submit = SubmitField("Delete Student")
