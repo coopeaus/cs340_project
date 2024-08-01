@@ -43,30 +43,59 @@ def students():
             db_connection = db.connect_to_database()
             first_name = form.first_name.data
             last_name = form.last_name.data
-            house_id = form.house_id.data
+            house_name = form.house_name.data
             level_attending = form.level_attending.data
-            query = (
-                "INSERT INTO Students (first_name, last_name, house_id, "
-                "level_attending) VALUES (%s, %s,%s,%s)"
-            )
-            cursor = db.execute_query(
-                db_connection=db_connection,
-                query=query,
-                query_params=(
-                    first_name,
-                    last_name,
-                    house_id,
-                    level_attending,
-                ),
-            )
-            return redirect("/students")
+            if house_name == "":
+                query = (
+                    "INSERT INTO Students (first_name, last_name, "
+                    "level_attending) VALUES (%s,%s,%s)"
+                )
+                cursor = db.execute_query(
+                    db_connection=db_connection,
+                    query=query,
+                    query_params=(
+                        first_name,
+                        last_name,
+                        level_attending,
+                    ),
+                )
+                # Close the cursor and connection each time.
+                cursor.close()
+                db_connection.close()
+                return redirect("/students")
+            else:
+                query_house = (
+                    "SELECT Houses.house_id, Houses.house_name FROM Houses"
+                )
+                cursor = db.execute_query(
+                    db_connection=db_connection, query=query_house
+                )
+                houses = cursor.fetchall()
+                for house in houses:
+                    if house_name == house["house_name"]:
+                        house_id = house["house_id"]
+                query = (
+                    "INSERT INTO Students (first_name, last_name, house_id, "
+                    "level_attending) VALUES (%s, %s,%s,%s)"
+                )
+                cursor = db.execute_query(
+                    db_connection=db_connection,
+                    query=query,
+                    query_params=(
+                        first_name,
+                        last_name,
+                        house_id,
+                        level_attending,
+                    ),
+                )
+                # Close the cursor and connection each time.
+                cursor.close()
+                db_connection.close()
+                return redirect("/students")
         except MySQLdb.Error as e:
             # Catch and display any DB errors
+            print(e)
             return e
-        finally:
-            # Close the cursor and connection each time.
-            cursor.close()
-            db_connection.close()
     else:
         try:
             # We were having connection issues, so decided
@@ -74,7 +103,12 @@ def students():
             # Per the MySQLdb library docs, the cursor should be closed
             # at a minimum each time.
             db_connection = db.connect_to_database()
-            query = "SELECT * FROM Students;"
+            query = (
+                "SELECT Students.student_id, Students.first_name, "
+                "Students.last_name, Houses.house_name AS house_name, "
+                "Students.level_attending FROM Students LEFT JOIN Houses "
+                "ON Students.house_id = Houses.house_id;"
+            )
             cursor = db.execute_query(db_connection=db_connection, query=query)
             students = cursor.fetchall()
             # Structured these into a dictionary, to pass in as **kwargs
@@ -85,7 +119,6 @@ def students():
                 "enroll_form": custom_forms.NewStudentForm(),
                 "find_form": custom_forms.LookupStudentForm(),
                 "update_form": custom_forms.UpdateStudentForm(),
-                # "delete_form": custom_forms.DeleteStudentForm(),
             }
             return render_template("students.j2", **values)
         except MySQLdb.Error as e:
@@ -126,7 +159,6 @@ def professors():
             "records": professors,
             "new_prof": custom_forms.NewProfessorForm(),
             "update_form": custom_forms.UpdateProfessorForm(),
-            # "delete_form": custom_forms.DeleteProfessorForm(),
         }
         return render_template("professors.j2", **values)
     except MySQLdb.Error as e:
@@ -151,7 +183,6 @@ def houses():
             "records": houses,
             "new_house": custom_forms.NewHouseForm(),
             "update_form": custom_forms.UpdateHouseForm(),
-            # "delete_form": custom_forms.DeleteHouseForm(),
         }
         return render_template("houses.j2", **values)
     except MySQLdb.Error as e:
@@ -176,7 +207,6 @@ def subjects():
             "records": subjects,
             "new_sub": custom_forms.NewSubjectForm(),
             "update_form": custom_forms.UpdateSubjectForm(),
-            # "delete_form": custom_forms.DeleteSubjectForm(),
         }
         return render_template("subjects.j2", **values)
     except MySQLdb.Error as e:
@@ -201,7 +231,6 @@ def classes():
             "records": classes,
             "new_class": custom_forms.NewClassForm(),
             "update_form": custom_forms.UpdateClassForm(),
-            # "delete_form": custom_forms.DeleteClassForm(),
         }
         return render_template("classes.j2", **values)
     except MySQLdb.Error as e:
@@ -228,7 +257,6 @@ def registrations():
                 "Find Class Registrations for a Student",
             ],
             "new_reg": custom_forms.NewRegistrationForm(),
-            # "delete_form": custom_forms.DeleteRegistrationForm(),
         }
         return render_template("registrations.j2", **values)
     except MySQLdb.Error as e:

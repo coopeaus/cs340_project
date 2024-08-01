@@ -18,12 +18,11 @@ SET AUTOCOMMIT = 0;
 -- for table `Students`
 --
 
--- add a new student, and enroll that student in required History of Magic for First Years
+-- browse students
+SELECT Students.student_id, Students.first_name, Students.last_name, Houses.house_name AS house_name, Students.level_attending FROM Students LEFT JOIN Houses ON Students.house_id = Houses.house_id;
+
+-- add a new student
 INSERT INTO Students (first_name, last_name, house_id, level_attending) VALUES (:fnameInput, :lnameInput, :house_id_from_dropdownInput, :level_attendingInput);
-INSERT INTO Class_Registrations(student_id, class_id)
-    SELECT LAST_INSERT_ID(), class_id
-    FROM Classes
-        WHERE subject_id = (SELECT subject_id FROM Subjects WHERE subject_name='History of Magic') AND class_level = 1;
 
 -- find a student id by first and last name
 SELECT student_id FROM Students WHERE first_name = :fnameInput AND last_name = :lnameInput;
@@ -36,6 +35,10 @@ UPDATE Students SET first_name = :fnameInput, last_name = :lnameInput, house_id 
 
 -- delete a student
 DELETE FROM Students WHERE student_id = :student_ID_selected_from_students_page;
+
+-- drop down menus
+SELECT house_name FROM Houses;
+SELECT student_id FROM Students;
 
 --
 -- for table `Professors`
