@@ -45,12 +45,12 @@ CREATE OR REPLACE TABLE Professors (
 
 CREATE OR REPLACE TABLE Houses (
     house_id int(11) NOT NULL UNIQUE AUTO_INCREMENT,
-    head_of_house int(11) NOT NULL,
+    head_of_house int(11),
     house_name varchar(255) NOT NULL,
     house_animal varchar(255) NOT NULL,
     house_colors varchar(255) NOT NULL,
     PRIMARY KEY (house_id),
-    FOREIGN KEY (head_of_house) REFERENCES Professors(professor_id) ON DELETE CASCADE
+    FOREIGN KEY (head_of_house) REFERENCES Professors(professor_id) ON DELETE SET NULL
 );
 
 --
@@ -75,7 +75,7 @@ CREATE OR REPLACE TABLE Classes (
     class_level int(11) NOT NULL,
     PRIMARY KEY (class_id),
     FOREIGN KEY (subject_id) REFERENCES Subjects(subject_id) ON DELETE CASCADE,
-    FOREIGN KEY (professor_id) REFERENCES Professors(professor_id) ON DELETE CASCADE
+    FOREIGN KEY (professor_id) REFERENCES Professors(professor_id) ON DELETE SET NULL
 );
 
 --
