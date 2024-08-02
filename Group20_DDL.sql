@@ -20,12 +20,12 @@ SET AUTOCOMMIT = 0;
 
 CREATE OR REPLACE TABLE Students (
     student_id int(11) NOT NULL UNIQUE AUTO_INCREMENT,
-    house_id int(11) NOT NULL,
+    house_id int(11),
     first_name varchar(255) NOT NULL,
     last_name varchar(255) NOT NULL,
     level_attending int(11) NOT NULL,
     PRIMARY KEY (student_id),
-    FOREIGN KEY (house_id) REFERENCES Houses(house_id) ON DELETE CASCADE
+    FOREIGN KEY (house_id) REFERENCES Houses(house_id) ON DELETE SET NULL
 );
 
 --
