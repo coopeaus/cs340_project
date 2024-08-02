@@ -94,7 +94,6 @@ def students():
                 return redirect("/students")
         except MySQLdb.Error as e:
             # Catch and display any DB errors
-            print(e)
             return e
     else:
         try:
@@ -144,6 +143,32 @@ def delete_student(id):
     finally:
         cursor.close()
         db_connection.close()
+
+
+@app.route("/edit_Students/<int:id>", methods=["post", "get"])
+def edit_student(id):
+    # form = custom_forms.UpdateStudentForm(request.form)
+    if request.method == "GET":
+        try:
+            db_connection = db.connect_to_database()
+            query = "SELECT * FROM Students WHERE student_id = %s" % (id)
+            cursor = db.execute_query(db_connection=db_connection, query=query)
+            student = cursor.fetchall()
+            # Structured these into a dictionary, to pass in as **kwargs
+            values = {
+                "title": "Students",
+                "records": student,
+                "fkey": list(student[0].keys())[0],
+                "update_form": custom_forms.UpdateStudentForm(),
+            }
+            return render_template("edit_students.j2", **values)
+        except MySQLdb.Error as e:
+            # Catch and display any DB errors
+            return e
+        finally:
+            # Close the cursor and connection each time.
+            cursor.close()
+            db_connection.close()
 
 
 @app.route("/professors")

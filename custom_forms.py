@@ -3,23 +3,18 @@ from wtforms import StringField, SubmitField, SelectField
 import database.db_connector as db
 
 
-db_connection = db.connect_to_database()
-query_house_names = "SELECT house_name FROM Houses;"
-cursor = db.execute_query(db_connection=db_connection, query=query_house_names)
-house_names = cursor.fetchall()
-hname_choices = [house_name["house_name"] for house_name in house_names]
-hname_choices.insert(0, "")
-
-query_student_ids = "SELECT student_id FROM Students;"
-cursor = db.execute_query(db_connection=db_connection, query=query_student_ids)
-student_ids = cursor.fetchall()
-sid_choices = [student_id["student_id"] for student_id in student_ids]
-
-cursor.close()
-db_connection.close()
-
-
 class NewStudentForm(FlaskForm):
+    db_connection = db.connect_to_database()
+    query_house_names = "SELECT house_name FROM Houses;"
+    cursor = db.execute_query(
+        db_connection=db_connection, query=query_house_names
+    )
+    house_names = cursor.fetchall()
+    hname_choices = [house_name["house_name"] for house_name in house_names]
+    hname_choices.insert(0, "")
+    cursor.close()
+    db_connection.close()
+
     first_name = StringField("First Name")
     last_name = StringField("Last Name")
     house_name = SelectField("House Name", choices=hname_choices)
@@ -36,7 +31,17 @@ class LookupStudentForm(FlaskForm):
 
 
 class UpdateStudentForm(FlaskForm):
-    student_id = SelectField("Student ID #", choices=sid_choices)
+    db_connection = db.connect_to_database()
+    query_house_names = "SELECT house_name FROM Houses;"
+    cursor = db.execute_query(
+        db_connection=db_connection, query=query_house_names
+    )
+    house_names = cursor.fetchall()
+    hname_choices = [house_name["house_name"] for house_name in house_names]
+    hname_choices.insert(0, "")
+    cursor.close()
+    db_connection.close()
+
     first_name = StringField("First Name")
     last_name = StringField("Last Name")
     house_name = SelectField("House Name", choices=hname_choices)

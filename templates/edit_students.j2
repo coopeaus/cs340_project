@@ -1,0 +1,32 @@
+{% extends "base_template.j2" %}
+
+<title>{% block title %} Edit Students {% endblock title %}</title>
+
+{% block show_forms %}
+
+    <div class="container">
+        <h2>Update Student</h2>
+        <div class="form-row align-items-center">
+            <div class="form-group col-auto">
+                {{ update_form.first_name.label(class="form-label") }}
+                {{ update_form.first_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.last_name.label(class="form-label") }}
+                {{ update_form.last_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.house_name.label(class="form-label") }}
+                {{ update_form.house_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.level_attending.label(class="form-label") }}
+                {{ update_form.level_attending(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ update_form.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+{% endblock show_forms %}
