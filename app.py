@@ -48,7 +48,7 @@ def students():
             level_attending = form.level_attending.data
             if house_name == "":
                 query = """
-                    INSERT INTO Students (first_name, last_name
+                    INSERT INTO Students (first_name, last_name,
                     level_attending) VALUES (%s,%s,%s);"""
                 cursor = db.execute_query(
                     db_connection=db_connection,
@@ -92,6 +92,7 @@ def students():
                 return redirect("/students")
         except MySQLdb.Error as e:
             # Catch and display any DB errors
+            print(e)
             return e
     else:
         try:
