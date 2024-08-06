@@ -151,23 +151,16 @@ def edit_student(id):
         db_connection = db.connect_to_database()
         cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
 
-        # Check if house_id is null for the student we wish to edit
-        query_null = (
-            "SELECT ISNULL(house_id) FROM Students WHERE student_id = %s;"
-            % (id)
+        query = "SELECT * FROM Students WHERE student_id = %s;" % (id)
+        cursor.execute(
+            query=query,
         )
-        cursor.execute(query=query_null)
-        house_null = cursor.fetchone()
+        student = cursor.fetchone()
 
-        if not house_null:
-            query = "SELECT * FROM Students WHERE student_id = %s;" % (id)
-            cursor.execute(
-                query=query,
-            )
-            student = cursor.fetchone()
-            # Find the student's house name and add it to the
-            # student dictionary
-            house_id = student["house_id"]
+        # Find the student's house name and add it to the
+        # student dictionary
+        house_id = student["house_id"]
+        if house_id:
             house_query = (
                 "SELECT house_name from Houses WHERE house_id = %s;"
                 % (house_id)
@@ -176,13 +169,12 @@ def edit_student(id):
             house = cursor.fetchone()
             student["house_name"] = house["house_name"]
         else:
-            query = "SELECT * FROM Students WHERE student_id = %s;" % (id)
-            cursor.execute(query=query)
-            student = cursor.fetchone()
-            student["house_name"] = ""
+            student["house_name"] = None
+
         # Create the form. If we are sending a POST request, create the form
         # appropriately.
         # Unpack the data in students for use as default, pre-filled values
+
         form = custom_forms.UpdateStudentForm(
             request.form if request.method == "POST" else None, **student
         )
