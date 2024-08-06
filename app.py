@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect
 from flask_bootstrap import Bootstrap5
 from flask_wtf import CSRFProtect
 import MySQLdb
+import MySQLdb.cursors
 import secrets
 import custom_forms
 import database.db_connector as db
@@ -97,10 +98,6 @@ def students():
             return e
     else:
         try:
-            # We were having connection issues, so decided
-            # to renew the DB connection on each request.
-            # Per the MySQLdb library docs, the cursor should be closed
-            # at a minimum each time.
             db_connection = db.connect_to_database()
             query = (
                 "SELECT Students.student_id, Students.first_name, "
@@ -147,28 +144,80 @@ def delete_student(id):
 
 @app.route("/edit_Students/<int:id>", methods=["post", "get"])
 def edit_student(id):
-    # form = custom_forms.UpdateStudentForm(request.form)
-    if request.method == "GET":
-        try:
-            db_connection = db.connect_to_database()
-            query = "SELECT * FROM Students WHERE student_id = %s" % (id)
-            cursor = db.execute_query(db_connection=db_connection, query=query)
-            student = cursor.fetchall()
+    try:
+        # Create one connection and query to be re-used for both methods
+        # DictCursor type found here:
+        # https://mysqlclient.readthedocs.io/user_guide.html#cursor-objects
+        # Used so that fetchone returns key:value pairs instead of just a list
+        db_connection = db.connect_to_database()
+        cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
+
+        # Find the student we wish to edit
+        query = "SELECT * FROM Students WHERE student_id = %s" % (id)
+        cursor.execute(query=query)
+        student = cursor.fetchone()
+
+        # Find the student's house name and add it to the student dictionary
+        house_query = "SELECT house_name from Houses WHERE house_id = %s" % (
+            student["house_id"]
+        )
+        cursor.execute(query=house_query)
+        house = cursor.fetchone()
+        student["house_name"] = house["house_name"]
+
+        # Create the form. If we are sending a POST request, create the form
+        # appropriately.
+        # Unpack the data in students for use as default, pre-filled values
+        form = custom_forms.UpdateStudentForm(
+            request.form if request.method == "POST" else None, **student
+        )
+
+        if request.method == "GET":
             # Structured these into a dictionary, to pass in as **kwargs
             values = {
                 "title": "Students",
                 "records": student,
-                "fkey": list(student[0].keys())[0],
-                "update_form": custom_forms.UpdateStudentForm(),
+                "fkey": list(student.keys()),
+                "update_form": form,
             }
             return render_template("edit_students.j2", **values)
-        except MySQLdb.Error as e:
-            # Catch and display any DB errors
-            return e
-        finally:
-            # Close the cursor and connection each time.
-            cursor.close()
-            db_connection.close()
+
+        if request.method == "POST":
+            # Get form data
+            first_name = form.first_name.data
+            last_name = form.last_name.data
+            house_name = form.house_name.data
+            level_attending = form.level_attending.data
+
+            # Derive house_id from house_name
+            house_query = "SELECT house_id FROM Houses WHERE house_name = %s"
+            cursor.execute(house_query, (house_name,))
+            house_id = cursor.fetchone()
+            house_id = house_id["house_id"]
+
+            # Update the database with the request
+            update_query = """
+            UPDATE Students SET
+                first_name = %s,
+                last_name = %s,
+                house_id = %s,
+                level_attending = %s
+            WHERE student_id = %s
+            """
+            cursor.execute(
+                update_query,
+                (first_name, last_name, house_id, level_attending, id),
+            )
+            db_connection.commit()
+
+            return redirect("/students")
+
+    except Exception as e:
+        print(e)
+        return e
+    finally:
+        cursor.close()
+        db_connection.close()
 
 
 @app.route("/professors")

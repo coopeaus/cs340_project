@@ -2,8 +2,16 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField
 import database.db_connector as db
 
+# Citation for the below classes
+# Date: 7/30/2024
+# Adapted from:
+# Examples in WTForms documentation
+# Source URL: https://wtforms.readthedocs.io/en/3.1.x/fields/
+
 
 class NewStudentForm(FlaskForm):
+    """Represents the Create Student Form"""
+
     db_connection = db.connect_to_database()
     query_house_names = "SELECT house_name FROM Houses;"
     cursor = db.execute_query(
@@ -25,12 +33,16 @@ class NewStudentForm(FlaskForm):
 
 
 class LookupStudentForm(FlaskForm):
+    """Represents the Student Lookup Form"""
+
     first_name = StringField("First Name")
     last_name = StringField("Last Name")
     submit = SubmitField("Find Student")
 
 
 class UpdateStudentForm(FlaskForm):
+    """Represents the Update Student Form"""
+
     db_connection = db.connect_to_database()
     query_house_names = "SELECT house_name FROM Houses;"
     cursor = db.execute_query(
@@ -41,7 +53,6 @@ class UpdateStudentForm(FlaskForm):
     hname_choices.insert(0, "")
     cursor.close()
     db_connection.close()
-
     first_name = StringField("First Name")
     last_name = StringField("Last Name")
     house_name = SelectField("House Name", choices=hname_choices)
@@ -52,12 +63,16 @@ class UpdateStudentForm(FlaskForm):
 
 
 class NewProfessorForm(FlaskForm):
+    """Represents the Create Professor Form"""
+
     first_name = StringField("First Name")
     last_name = StringField("Last Name")
     submit = SubmitField("Add New Professor")
 
 
 class UpdateProfessorForm(FlaskForm):
+    """Represents the Update Professor Form"""
+
     professor_id = SelectField(
         "Professor ID #", choices=[i for i in range(1, 5)]
     )
@@ -67,6 +82,8 @@ class UpdateProfessorForm(FlaskForm):
 
 
 class NewHouseForm(FlaskForm):
+    """Represents the Create House Form"""
+
     head_of_house = SelectField(
         "Head of House", choices=[i for i in range(1, 5)]
     )
@@ -77,6 +94,8 @@ class NewHouseForm(FlaskForm):
 
 
 class UpdateHouseForm(FlaskForm):
+    """Represents the Update House Form"""
+
     house_id = SelectField("House ID #", choices=[1, 2, 3, 4])
     head_of_house = SelectField(
         "Head of House", choices=[i for i in range(1, 5)]
@@ -88,12 +107,16 @@ class UpdateHouseForm(FlaskForm):
 
 
 class NewSubjectForm(FlaskForm):
+    """Represents the Create Subject Form"""
+
     subject_name = StringField("Subject Name")
     core_elective = SelectField("Core(1)/Elective(0)", choices=[0, 1])
     submit = SubmitField("Add New Subject")
 
 
 class UpdateSubjectForm(FlaskForm):
+    """Represents the Update Subject Form"""
+
     subject_id = SelectField("Subject ID #", choices=[i for i in range(1, 13)])
     subject_name = StringField("Subject Name")
     core_elective = SelectField("Core(1)/Elective(0)", choices=[0, 1])
@@ -101,6 +124,8 @@ class UpdateSubjectForm(FlaskForm):
 
 
 class NewClassForm(FlaskForm):
+    """Represents the Create Class Form"""
+
     subject_id = SelectField("Subject ID #", choices=[i for i in range(1, 13)])
     professor_id = SelectField(
         "Professor ID #", choices=[i for i in range(1, 5)]
@@ -110,6 +135,8 @@ class NewClassForm(FlaskForm):
 
 
 class UpdateClassForm(FlaskForm):
+    """Represents the Update Class Form"""
+
     class_id = SelectField("Class ID #", choices=[i for i in range(1, 21)])
     subject_id = SelectField("Subject ID #", choices=[i for i in range(1, 13)])
     professor_id = SelectField(
@@ -120,6 +147,8 @@ class UpdateClassForm(FlaskForm):
 
 
 class NewRegistrationForm(FlaskForm):
+    """Represents the Create Class_Registration Form"""
+
     student_id = SelectField("Student ID #", choices=[i for i in range(1, 14)])
     class_id = SelectField("Class ID #", choices=[i for i in range(1, 21)])
     submit = SubmitField("Add New Registration")

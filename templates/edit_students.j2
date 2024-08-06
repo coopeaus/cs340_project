@@ -2,11 +2,15 @@
 
 <title>{% block title %} Edit Students {% endblock title %}</title>
 
+{% block show_table %}
+{% endblock show_table %}
+
 {% block show_forms %}
 
     <div class="container">
         <h2>Update Student</h2>
-        <div class="form-row align-items-center">
+        <form action="/edit_Students/{{ records['student_id'] }}" method="post" class="form-row align-items-center">
+            {{ update_form.csrf_token }}
             <div class="form-group col-auto">
                 {{ update_form.first_name.label(class="form-label") }}
                 {{ update_form.first_name(class="form-control") }}
