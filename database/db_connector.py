@@ -1,28 +1,27 @@
 import MySQLdb
-from database.db_credentials import host, user, passwd, db
+import os
+from dotenv import load_dotenv, find_dotenv
+
+# from database.db_credentials import host, user, passwd, db
 
 # Citation for db_connector.py
 # Date: 7/24/24
 # Copied from
 # Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
 
-# import os
-# from dotenv import load_dotenv, find_dotenv
 
-# Load our environment variables from the .env file in the root of our project.
-# load_dotenv(find_dotenv())
-
-# Set the variables in our application with those environment variables
-# host = os.environ.get("340DBHOST")
-# user = os.environ.get("340DBUSER")
-# passwd = os.environ.get("340DBPW")
-# db = os.environ.get("340DB")
-
-
-def connect_to_database(host=host, user=user, passwd=passwd, db=db):
+def connect_to_database():
     """
     connects to a database and returns a database objects
     """
+    # Load our environment variables from the .env file in the root of our project.  # noqa: E501
+    load_dotenv(find_dotenv())
+
+    # Set the variables in our application with those environment variables
+    host = os.environ.get("340DBHOST")
+    user = os.environ.get("340DBUSER")
+    passwd = os.environ.get("340DBPW")
+    db = os.environ.get("340DB")
     db_connection = MySQLdb.connect(host, user, passwd, db)
     return db_connection
 

@@ -5,6 +5,7 @@
 + [Requirements](#requirements)
 + [Setting Up Python Virtual Environment](#venv)
 + [Install Requirements](#reqs)
++ [Update .env](#env)
 + [Formatting and Linting](#formatting)
 + [Contributors](#contributors)
 + [README Citation](#citation)
@@ -84,6 +85,11 @@ It is recommended that you use a Python virtual environment for this (and all) P
     ```bash
     python -m pip install -U -r requirements.txt
     ```
+
+# Update .env<a name="env"></a>
+
+- The included `.env_template` file must be updated with appropriate values, and renamed to `.env`
+
 
 # Formatting and Linting<a name="formatting"></a>
 This project uses black for formatting, and flake8 for linting.
