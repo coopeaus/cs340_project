@@ -97,21 +97,14 @@ def students():
     else:
         try:
             db_connection = db.connect_to_database()
-            query = """
-                SELECT student_id, first_name, last_name,
-                house_id as house_name, level_attending FROM Students;
-            """
+            query = (
+                "SELECT Students.student_id, Students.first_name, "
+                "Students.last_name, Houses.house_name AS house_name, "
+                "Students.level_attending FROM Students LEFT JOIN Houses "
+                "ON Students.house_id = Houses.house_id;"
+            )
             cursor = db.execute_query(db_connection=db_connection, query=query)
             students = cursor.fetchall()
-            query_house = "SELECT house_id, house_name FROM Houses;"
-            cursor = db.execute_query(
-                db_connection=db_connection, query=query_house
-            )
-            houses = cursor.fetchall()
-            for student in students:
-                for house in houses:
-                    if student["house_name"] == house["house_id"]:
-                        student["house_name"] = house["house_name"]
 
             # Structured these into a dictionary, to pass in as **kwargs
             values = {
