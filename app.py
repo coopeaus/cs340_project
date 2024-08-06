@@ -47,10 +47,9 @@ def students():
             house_name = form.house_name.data
             level_attending = form.level_attending.data
             if house_name == "":
-                query = (
-                    "INSERT INTO Students (first_name, last_name, "
-                    "level_attending) VALUES (%s,%s,%s)"
-                )
+                query = """
+                    INSERT INTO Students (first_name, last_name
+                    level_attending) VALUES (%s,%s,%s);"""
                 cursor = db.execute_query(
                     db_connection=db_connection,
                     query=query,
@@ -65,9 +64,8 @@ def students():
                 db_connection.close()
                 return redirect("/students")
             else:
-                query_house = (
-                    "SELECT Houses.house_id, Houses.house_name FROM Houses"
-                )
+                query_house = """SELECT Houses.house_id,
+                    Houses.house_name FROM Houses;"""
                 cursor = db.execute_query(
                     db_connection=db_connection, query=query_house
                 )
@@ -75,10 +73,9 @@ def students():
                 for house in houses:
                     if house_name == house["house_name"]:
                         house_id = house["house_id"]
-                query = (
-                    "INSERT INTO Students (first_name, last_name, house_id, "
-                    "level_attending) VALUES (%s, %s,%s,%s)"
-                )
+                query = """
+                    INSERT INTO Students (first_name, last_name, house_id,
+                    level_attending) VALUES (%s, %s,%s,%s);"""
                 cursor = db.execute_query(
                     db_connection=db_connection,
                     query=query,
@@ -99,14 +96,22 @@ def students():
     else:
         try:
             db_connection = db.connect_to_database()
-            query = (
-                "SELECT Students.student_id, Students.first_name, "
-                "Students.last_name, Houses.house_name AS house_name, "
-                "Students.level_attending FROM Students LEFT JOIN Houses "
-                "ON Students.house_id = Houses.house_id;"
-            )
+            query = """
+                SELECT student_id, first_name, last_name,
+                house_id as house_name, level_attending FROM Students;
+            """
             cursor = db.execute_query(db_connection=db_connection, query=query)
             students = cursor.fetchall()
+            query_house = "SELECT house_id, house_name FROM Houses;"
+            cursor = db.execute_query(
+                db_connection=db_connection, query=query_house
+            )
+            houses = cursor.fetchall()
+            for student in students:
+                for house in houses:
+                    if student["house_name"] == house["house_id"]:
+                        student["house_name"] = house["house_name"]
+
             # Structured these into a dictionary, to pass in as **kwargs
             values = {
                 "title": "Students",
@@ -152,19 +157,35 @@ def edit_student(id):
         db_connection = db.connect_to_database()
         cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
 
-        # Find the student we wish to edit
-        query = "SELECT * FROM Students WHERE student_id = %s" % (id)
-        cursor.execute(query=query)
-        student = cursor.fetchone()
-
-        # Find the student's house name and add it to the student dictionary
-        house_query = "SELECT house_name from Houses WHERE house_id = %s" % (
-            student["house_id"]
+        # Check if house_id is null for the student we wish to edit
+        query_null = (
+            "SELECT ISNULL(house_id) FROM Students WHERE student_id = %s;"
+            % (id)
         )
-        cursor.execute(query=house_query)
-        house = cursor.fetchone()
-        student["house_name"] = house["house_name"]
+        cursor.execute(query=query_null)
+        house_null = cursor.fetchone()
 
+        if not house_null:
+            query = "SELECT * FROM Students WHERE student_id = %s;" % (id)
+            cursor.execute(
+                query=query,
+            )
+            student = cursor.fetchone()
+            # Find the student's house name and add it to the
+            # student dictionary
+            house_id = student["house_id"]
+            house_query = (
+                "SELECT house_name from Houses WHERE house_id = %s;"
+                % (house_id)
+            )
+            cursor.execute(query=house_query)
+            house = cursor.fetchone()
+            student["house_name"] = house["house_name"]
+        else:
+            query = "SELECT * FROM Students WHERE student_id = %s;" % (id)
+            cursor.execute(query=query)
+            student = cursor.fetchone()
+            student["house_name"] = ""
         # Create the form. If we are sending a POST request, create the form
         # appropriately.
         # Unpack the data in students for use as default, pre-filled values
@@ -189,31 +210,47 @@ def edit_student(id):
             house_name = form.house_name.data
             level_attending = form.level_attending.data
 
-            # Derive house_id from house_name
-            house_query = "SELECT house_id FROM Houses WHERE house_name = %s"
-            cursor.execute(house_query, (house_name,))
-            house_id = cursor.fetchone()
-            house_id = house_id["house_id"]
+            if house_name == "":
+                update_query = """
+                UPDATE Students SET
+                    first_name = %s,
+                    last_name = %s,
+                    house_id = NULL,
+                    level_attending = %s
+                WHERE student_id = %s;
+                """
+                cursor.execute(
+                    update_query,
+                    (first_name, last_name, level_attending, id),
+                )
+                db_connection.commit()
+                return redirect("/students")
+            else:
+                # Derive house_id from house_name
+                house_query = """
+                    SELECT house_id FROM Houses WHERE house_name = %s;"""
+                cursor.execute(house_query, (house_name,))
+                house_id = cursor.fetchone()
+                house_id = house_id["house_id"]
 
-            # Update the database with the request
-            update_query = """
-            UPDATE Students SET
-                first_name = %s,
-                last_name = %s,
-                house_id = %s,
-                level_attending = %s
-            WHERE student_id = %s
-            """
-            cursor.execute(
-                update_query,
-                (first_name, last_name, house_id, level_attending, id),
-            )
-            db_connection.commit()
+                # Update the database with the request
+                update_query = """
+                UPDATE Students SET
+                    first_name = %s,
+                    last_name = %s,
+                    house_id = %s,
+                    level_attending = %s
+                WHERE student_id = %s;
+                """
+                cursor.execute(
+                    update_query,
+                    (first_name, last_name, house_id, level_attending, id),
+                )
+                db_connection.commit()
 
-            return redirect("/students")
+                return redirect("/students")
 
     except Exception as e:
-        print(e)
         return e
     finally:
         cursor.close()
