@@ -6,12 +6,13 @@
 + [Setting Up Python Virtual Environment](#venv)
 + [Install Requirements](#reqs)
 + [Update .env](#env)
++ [Start the Server](#start)
 + [Formatting and Linting](#formatting)
 + [Contributors](#contributors)
 + [README Citation](#citation)
 
 ## Overview<a name="overview"></a>
-Tbd
+The Hogwarts registration database is a handy tool for managing Students, Professors, Houses, Subjects, Classes, and Class_Registrations.
 
 ## Requirements<a name="requirements"></a>
 - Python 3.9+
@@ -90,6 +91,10 @@ It is recommended that you use a Python virtual environment for this (and all) P
 
 - The included `.env_template` file must be updated with appropriate values, and renamed to `.env`
 
+# Start the Server<a name="start"></a>
+Run the following command to start the server:
+- `gunicorn --bind 0.0.0.0:portnum wsgi:app -D`
+Where portnum is an unused port on the host machine.
 
 # Formatting and Linting<a name="formatting"></a>
 This project uses black for formatting, and flake8 for linting.
