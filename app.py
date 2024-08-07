@@ -195,26 +195,135 @@ def edit_student(id: int):
         db_connection.close()
 
 
-@app.route("/professors")
+@app.route("/professors", methods=["post", "get"])
 def professors():
     """Displays the Professors page and associated CRUD operations"""
     try:
         db_connection = db.connect_to_database()
-        query = "SELECT * FROM Professors;"
-        cursor = db.execute_query(db_connection=db_connection, query=query)
-        professors = cursor.fetchall()
-        values = {
-            "title": "Professors",
-            "records": professors,
-            "new_prof": custom_forms.NewProfessorForm(),
-            "update_form": custom_forms.UpdateProfessorForm(),
-        }
-        return render_template("professors.j2", **values)
+        cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
+
+        if request.method == "POST":
+            form = custom_forms.NewProfessorForm(request.form)
+
+            # Insert the new professor data
+            query = """
+                INSERT INTO Professors (first_name, last_name)
+                VALUES (%s, %s);"""
+            cursor.execute(
+                query,
+                (
+                    form.first_name.data,
+                    form.last_name.data,
+                ),
+            )
+
+            # Commit changes
+            db_connection.commit()
+            return redirect("/professors")
+
+        elif request.method == "GET":
+            query = "SELECT * FROM Professors;"
+            cursor.execute(query=query)
+            professors = cursor.fetchall()
+
+            # Structured these into a dictionary, to pass in as **kwargs
+            values = {
+                "title": "Professors",
+                "records": professors,
+                "fkey": list(professors[0].keys())[0],
+                "new_prof": custom_forms.NewProfessorForm(),
+                "update_form": custom_forms.UpdateProfessorForm(),
+            }
+            print(values["fkey"])
+            return render_template("professors.j2", **values)
+
+    except Exception as e:
+        print(e)
+        return e
+
+    finally:
+        # Close the cursor and db_connection due to stability issues
+        cursor.close()
+        db_connection.close()
+
+
+@app.route("/delete_Professors/<int:id>")
+def delete_professor(id: int):
+    """Remove a specific record from the Professors table
+
+    :param id: The professor_id for the Professor record to delete
+    :type id: int
+    """
+    try:
+        db_connection = db.connect_to_database()
+        query = "DELETE FROM Professors WHERE professor_id = '%s';"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query, query_params=(id,)
+        )
+        return redirect("/professors")
     except MySQLdb.Error as e:
-        # Catch and display any DB errors
         return e
     finally:
-        # Close the cursor and connection.
+        cursor.close()
+        db_connection.close()
+
+
+@app.route("/edit_Professors/<int:id>", methods=["post", "get"])
+def edit_professor(id: int):
+    try:
+        # Create one connection and query to be re-used for both methods
+        db_connection = db.connect_to_database()
+        cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
+
+        query = "SELECT * FROM Professors WHERE professor_id = %s;" % (id)
+        cursor.execute(
+            query=query,
+        )
+        professor = cursor.fetchone()
+
+        # Create the form. If we are sending a POST request, create the form
+        # appropriately.
+        # Unpack the data in professors for use as default, pre-filled values
+        form = custom_forms.UpdateProfessorForm(
+            request.form if request.method == "POST" else None, **professor
+        )
+
+        if request.method == "GET":
+            # Structured these into a dictionary, to pass in as **kwargs
+            values = {
+                "title": "Professors",
+                "records": professor,
+                "fkey": list(professor.keys()),
+                "update_form": form,
+            }
+            return render_template("edit_professors.j2", **values)
+
+        if request.method == "POST":
+            # Query used to update a Professor
+            update_query = """
+            UPDATE Professors SET
+                first_name = %s,
+                last_name = %s
+            WHERE professor_id = %s;
+            """
+            cursor.execute(
+                update_query,
+                (
+                    form.first_name.data,
+                    form.last_name.data,
+                    id,
+                ),
+            )
+
+            # Save changes to DB
+            db_connection.commit()
+            return redirect("/professors")
+
+    except Exception as e:
+        print(e)
+        return e
+
+    finally:
         cursor.close()
         db_connection.close()
 

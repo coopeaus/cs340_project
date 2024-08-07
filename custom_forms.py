@@ -53,6 +53,7 @@ class UpdateStudentForm(FlaskForm):
     hname_choices.insert(0, "")
     cursor.close()
     db_connection.close()
+
     first_name = StringField("First Name")
     last_name = StringField("Last Name")
     house_name = SelectField("House Name", choices=hname_choices)
@@ -73,9 +74,6 @@ class NewProfessorForm(FlaskForm):
 class UpdateProfessorForm(FlaskForm):
     """Represents the Update Professor Form"""
 
-    professor_id = SelectField(
-        "Professor ID #", choices=[i for i in range(1, 5)]
-    )
     first_name = StringField("First Name")
     last_name = StringField("Last Name")
     submit = SubmitField("Update Professor")
