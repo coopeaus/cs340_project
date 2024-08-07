@@ -152,3 +152,11 @@ class NewRegistrationForm(FlaskForm):
     student_id = SelectField("Student ID #", choices=[i for i in range(1, 14)])
     class_id = SelectField("Class ID #", choices=[i for i in range(1, 21)])
     submit = SubmitField("Add New Registration")
+
+
+class UpdateRegistrationForm(FlaskForm):
+    """Represents the Update Class_Registration Form"""
+
+    student_id = SelectField("Student ID #", choices=[i for i in range(1, 14)])
+    class_id = SelectField("Class ID #", choices=[i for i in range(1, 21)])
+    submit = SubmitField("Update Registration")

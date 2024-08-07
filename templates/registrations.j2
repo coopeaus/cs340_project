@@ -2,17 +2,40 @@
 
 <title>{% block title %} Class Registrations {% endblock title %}</title>
 
-{% block show_forms %}
-
+{% block show_table %}
+<div class="container">
     <p>
-        {% for button in buttons %}
-            <a href="#">{{ button }}</a>
-        {% endfor %}
+        <table>
+            <thead>
+                <tr>
+                {% for key in records[0].keys() %}
+                    <th>{{ key }}</th>
+                {% endfor %}
+                </tr>
+            </thead>
+            <tbody>
+            {% for record in records %}
+                <tr>
+                {% for key in records[0].keys() %}
+                    <td>{{ record[key] }}</td>
+                {% endfor %}
+                    <td><a href="edit_{{ title }}/{{ record["student_id"] }}&{{ record["class_id"] }}">{{ "Edit" }}</a></td>
+                    <td><a href="delete_{{ title }}/{{ record["student_id"] }}&{{ record["class_id"] }}">{{ "Delete" }}</a></td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     </p>
+    <p>&nbsp;</p>
+</div>  <!-- browse -->
+{% endblock show_table %}
+
+{% block show_forms %}
 
     <div class="container">
         <h2>Add Registration</h2>
-        <div class="form-row align-items-center">
+        <form action="/registrations" method="post" class="form-row align-items-center">
+            {{ new_reg.csrf_token }}
             <div class="form-group col-auto">
                 {{ new_reg.student_id.label(class="form-label") }}
                 {{ new_reg.student_id(class="form-control") }}
