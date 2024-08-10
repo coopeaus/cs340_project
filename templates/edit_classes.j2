@@ -1,0 +1,34 @@
+{% extends "base_template.j2" %}
+
+<title>{% block title %} Edit Class {% endblock title %}</title>
+
+{% block show_table %}
+{% endblock show_table %}
+
+{% block show_forms %}
+
+    <div class="container">
+        <h2>Update Class</h2>
+        <form action="/edit_Classes/{{ records['class_id'] }}" method="post" class="form-row align-items-center">
+            {{ update_form.csrf_token }}
+            <div class="form-group col-auto">
+                {{ update_form.subject_id.label(class="form-label") }}
+                {{ update_form.subject_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.professor_id.label(class="form-label") }}
+                {{ update_form.professor_id(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.class_level.label(class="form-label") }}
+                {{ update_form.class_level(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ update_form.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+{% endblock show_forms %}
+
+

@@ -6,7 +6,8 @@
 
     <div class="container">
         <h2>Add Class</h2>
-        <div class="form-row align-items-center">
+        <form action="/classes" method="post" class="form-row align-items-center">
+            {{ new_class.csrf_token }}
             <div class="form-group col-auto">
                 {{ new_class.subject_id.label(class="form-label") }}
                 {{ new_class.subject_id(class="form-control") }}
@@ -25,29 +26,5 @@
         </div>
     </div>
 
-    <div class="container">
-        <h2>Update Class</h2>
-        <div class="form-row align-items-center">
-            <div class="form-group col-auto">
-                {{ update_form.class_id.label(class="form-label") }}
-                {{ update_form.class_id(class="form-control") }}
-            </div>
-            <div class="form-group col-auto">
-                {{ update_form.subject_id.label(class="form-label") }}
-                {{ update_form.subject_id(class="form-control") }}
-            </div>
-            <div class="form-group col-auto">
-                {{ update_form.professor_id.label(class="form-label") }}
-                {{ update_form.professor_id(class="form-control") }}
-            </div>
-            <div class="form-group col-auto">
-                {{ update_form.class_level.label(class="form-label") }}
-                {{ update_form.class_level(class="form-control") }}
-            </div>
-            <div class="form-group col-auto pt-4">
-                {{ update_form.submit(class="btn btn-primary") }}
-            </div>
-        </div>
-    </div>
 
 {% endblock show_forms %}

@@ -6,7 +6,8 @@
 
     <div class="container">
         <h2>Add Subject</h2>
-        <div class="form-row align-items-center">
+        <form action="/subjects" method="post" class="form-row align-items-center">
+            {{ new_sub.csrf_token }}
             <div class="form-group col-auto">
                 {{ new_sub.subject_name.label(class="form-label") }}
                 {{ new_sub.subject_name(class="form-control") }}
@@ -17,27 +18,6 @@
             </div>
             <div class="form-group col-auto pt-4">
                 {{ new_sub.submit(class="btn btn-primary") }}
-            </div>
-        </div>
-    </div>
-
-    <div class="container">
-        <h2>Update Subject</h2>
-        <div class="form-row align-items-center">
-            <div class="form-group col-auto">
-                {{ update_form.subject_id.label(class="form-label") }}
-                {{ update_form.subject_id(class="form-control") }}
-            </div>
-            <div class="form-group col-auto">
-                {{ update_form.subject_name.label(class="form-label") }}
-                {{ update_form.subject_name(class="form-control") }}
-            </div>
-            <div class="form-group col-auto">
-                {{ update_form.core_elective.label(class="form-label") }}
-                {{ update_form.core_elective(class="form-control") }}
-            </div>
-            <div class="form-group col-auto pt-4">
-                {{ update_form.submit(class="btn btn-primary") }}
             </div>
         </div>
     </div>
