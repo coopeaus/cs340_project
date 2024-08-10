@@ -83,8 +83,8 @@ def get_professor_ids() -> list[int]:
         prof_ids = cursor.fetchall()
         head_of_house_ids = []
 
-        # fetchall returns a tuple of dicts. Access each item of the tuple, then extract
-        # the id numbers
+        # fetchall returns a tuple of dicts. Access each item of the tuple,
+        # then extract the id numbers
         for pair in prof_ids:
             for label, value in pair.items():
                 head_of_house_ids.append(value)
@@ -118,8 +118,8 @@ def get_subject_ids() -> list[int]:
         sub_ids_found = cursor.fetchall()
         sub_ids = []
 
-        # fetchall returns a tuple of dicts. Access each item of the tuple, then extract
-        # the id numbers
+        # fetchall returns a tuple of dicts. Access each item of the tuple,
+        # then extract the id numbers
         for pair in sub_ids_found:
             for label, value in pair.items():
                 sub_ids.append(value)
@@ -153,8 +153,8 @@ def get_class_ids() -> list[int]:
         class_ids_found = cursor.fetchall()
         class_ids = []
 
-        # fetchall returns a tuple of dicts. Access each item of the tuple, then extract
-        # the id numbers
+        # fetchall returns a tuple of dicts. Access each item of the tuple,
+        # then extract the id numbers
         for pair in class_ids_found:
             for label, value in pair.items():
                 class_ids.append(value)
@@ -188,8 +188,8 @@ def get_student_ids() -> list[int]:
         student_ids_found = cursor.fetchall()
         student_ids = []
 
-        # fetchall returns a tuple of dicts. Access each item of the tuple, then extract
-        # the id numbers
+        # fetchall returns a tuple of dicts. Access each item of the tuple,
+        # then extract the id numbers
         for pair in student_ids_found:
             for label, value in pair.items():
                 student_ids.append(value)

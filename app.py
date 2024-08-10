@@ -336,13 +336,16 @@ def houses():
         cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
 
         # Create the form
-        form = custom_forms.NewHouseForm(request.form if request.method =="POST" else None)
+        form = custom_forms.NewHouseForm(
+            request.form if request.method == "POST" else None
+        )
 
         if request.method == "POST":
 
             # Insert the new house data
             query = """
-                INSERT INTO Houses (head_of_house, house_name, house_animal, house_colors)
+                INSERT INTO Houses
+                    (head_of_house, house_name, house_animal, house_colors)
                 VALUES (%s, %s, %s, %s);"""
             cursor.execute(
                 query,
@@ -471,7 +474,7 @@ def subjects():
     try:
         db_connection = db.connect_to_database()
         cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
-        
+
         # Create the form
         form = custom_forms.NewSubjectForm(request.form)
 
@@ -596,13 +599,14 @@ def edit_subject(id: int):
         cursor.close()
         db_connection.close()
 
+
 @app.route("/classes", methods=["post", "get"])
 def classes():
     """Displays the Classes page and associated CRUD operations"""
     try:
         db_connection = db.connect_to_database()
         cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
-        
+
         # Create the form
         form = custom_forms.NewClassForm(request.form)
 
