@@ -66,12 +66,11 @@ def students():
             return redirect("/students")
 
         elif request.method == "GET":
-            query = (
-                "SELECT Students.student_id, Students.first_name, "
-                "Students.last_name, Houses.house_name AS house_name, "
-                "Students.level_attending FROM Students LEFT JOIN Houses "
-                "ON Students.house_id = Houses.house_id;"
-            )
+            query = """
+                SELECT Students.student_id, Students.first_name,
+                Students.last_name, Houses.house_name AS house_name,
+                Students.level_attending FROM Students LEFT JOIN Houses
+                ON Students.house_id = Houses.house_id;"""
             cursor.execute(query=query)
             students = cursor.fetchall()
 
@@ -347,14 +346,13 @@ def houses():
             return redirect("/houses")
 
         elif request.method == "GET":
-            query = (
-                "SELECT Houses.house_id, "
-                "CONCAT(Professors.first_name, ' ', Professors.last_name) "
-                "AS head_of_house, Houses.house_name, "
-                "Houses.house_animal, Houses.house_colors "
-                "FROM Houses LEFT JOIN Professors "
-                "ON Houses.head_of_house = Professors.professor_id;"
-            )
+            query = """
+                SELECT Houses.house_id,
+                CONCAT(Professors.first_name, ' ', Professors.last_name)
+                AS head_of_house, Houses.house_name,
+                Houses.house_animal, Houses.house_colors
+                FROM Houses LEFT JOIN Professors
+                ON Houses.head_of_house = Professors.professor_id;"""
             cursor = db.execute_query(db_connection=db_connection, query=query)
             houses = cursor.fetchall()
 
@@ -599,10 +597,19 @@ def classes():
         db_connection = db.connect_to_database()
         cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
 
-        # Create the form
-        form = custom_forms.NewClassForm(request.form)
-
         if request.method == "POST":
+            form = custom_forms.NewClassForm(request.form)
+            if form.professor_name.data == "":
+                professor_id = None
+            else:
+                first_name, last_name = form.professor_name.data.split()
+                professor_id = helpers.get_professor_id_from_name(
+                    first_name, last_name
+                )
+            subject_id = helpers.get_subject_id_from_name(
+                form.subject_name.data
+            )
+
             # Insert the new class data
             query = """
                 INSERT INTO Classes (subject_id, professor_id, class_level)
@@ -610,8 +617,8 @@ def classes():
             cursor.execute(
                 query,
                 (
-                    form.subject_id.data,
-                    form.professor_id.data,
+                    subject_id,
+                    professor_id,
                     form.class_level.data,
                 ),
             )
@@ -621,7 +628,15 @@ def classes():
             return redirect("/classes")
 
         elif request.method == "GET":
-            query = "SELECT * FROM Classes;"
+            query = """
+                SELECT Classes.class_id, Subjects.subject_name AS subject_name,
+                CONCAT(Professors.first_name, ' ', Professors.last_name)
+                AS professor_name, Classes.class_level
+                FROM Classes
+                LEFT JOIN Subjects
+                ON Classes.subject_id = Subjects.subject_id
+                LEFT JOIN Professors
+                ON Classes.professor_id = Professors.professor_id;"""
             cursor.execute(query=query)
             classes = cursor.fetchall()
 
@@ -630,7 +645,7 @@ def classes():
                 "title": "Classes",
                 "records": classes,
                 "fkey": list(classes[0].keys())[0],
-                "new_class": form,
+                "new_class": custom_forms.NewClassForm(),
             }
             return render_template("classes.j2", **values)
 
@@ -662,11 +677,31 @@ def edit_class(id: int):
         db_connection = db.connect_to_database()
         cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
 
-        query = "SELECT * FROM Classes WHERE class_id = %s;" % (id)
+        query = """
+            SELECT Classes.class_id, Classes.subject_id AS subject_name,
+            Classes.professor_id AS professor_name, Classes.class_level
+            FROM Classes WHERE class_id = %s;""" % (
+            id
+        )
         cursor.execute(
             query=query,
         )
         target_class = cursor.fetchone()
+
+        # Find the professor_id and subject_id's names and add them to the
+        # class dictionary
+        professor_id = target_class["professor_name"]
+        if professor_id:
+            target_class["professor_name"] = (
+                helpers.get_professor_name_from_id(professor_id)
+            )
+        else:
+            target_class["professor_name"] = None
+
+        subject_id = target_class["subject_name"]
+        target_class["subject_name"] = helpers.get_subject_name_from_id(
+            subject_id
+        )
 
         # Create the form. If we are sending a POST request, create the form
         # appropriately.
@@ -686,6 +721,18 @@ def edit_class(id: int):
             return render_template("edit_classes.j2", **values)
 
         if request.method == "POST":
+            # Support for nullable professor_id foreign key.
+            if form.professor_name.data == "":
+                professor_id = None
+            else:
+                first_name, last_name = form.professor_name.data.split()
+                professor_id = helpers.get_professor_id_from_name(
+                    first_name, last_name
+                )
+
+            subject_name = form.subject_name.data
+            subject_id = helpers.get_subject_id_from_name(subject_name)
+
             # Query used to update a Subject
             update_query = """
             UPDATE Classes SET
@@ -697,8 +744,8 @@ def edit_class(id: int):
             cursor.execute(
                 update_query,
                 (
-                    form.subject_id.data,
-                    form.professor_id.data,
+                    subject_id,
+                    professor_id,
                     form.class_level.data,
                     id,
                 ),
@@ -726,7 +773,22 @@ def registrations():
 
         if request.method == "GET":
             # Display the table
-            query = "SELECT * FROM Class_Registrations;"
+            query = """
+                SELECT Class_Registrations.student_id,
+                CONCAT(Students.first_name, ' ', Students.last_name)
+                AS student_name, Class_Registrations.class_id,
+                Subjects.subject_name, Classes.class_level,
+                CONCAT(Professors.first_name, ' ', Professors.last_name)
+                AS professor_name
+                FROM Class_Registrations
+                LEFT JOIN Students
+                ON Class_Registrations.student_id = Students.student_id
+                LEFT JOIN Classes
+                ON Class_Registrations.class_id = Classes.class_id
+                LEFT JOIN Subjects
+                ON Classes.subject_id = Subjects.subject_id
+                LEFT JOIN Professors
+                ON Classes.professor_id = Professors.professor_id;"""
             cursor.execute(query)
             registrations = cursor.fetchall()
             values = {
@@ -737,12 +799,32 @@ def registrations():
             return render_template("registrations.j2", **values)
 
         elif request.method == "POST":
-            # INSERT a new Class_Registrations record
             form = custom_forms.NewRegistrationForm(request.form)
+            first_name, last_name = form.student_name.data.split()
+            student_id = helpers.get_student_id_from_name(
+                first_name, last_name
+            )
+
+            subject_name, class_level, professor_name = (
+                form.class_detail.data.split(", ")
+            )
+            subject_id = helpers.get_subject_id_from_name(subject_name)
+            if professor_name:
+                first_name, last_name = professor_name.split()
+                professor_id = helpers.get_professor_id_from_name(
+                    first_name, last_name
+                )
+            else:
+                professor_id = None
+            class_id = helpers.get_class_id_from_class_detail(
+                subject_id, class_level, professor_id
+            )
+
+            # INSERT a new Class_Registrations record
             query = """
                 INSERT into Class_Registrations (student_id, class_id)
                 VALUES (%s, %s);"""
-            cursor.execute(query, (form.student_id.data, form.class_id.data))
+            cursor.execute(query, (student_id, class_id))
             db_connection.commit()
             return redirect("/registrations")
 
@@ -797,8 +879,22 @@ def edit_registration(student_id: int, class_id: int):
         cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
 
         query = """
-            SELECT * FROM Class_Registrations WHERE
-                student_id = '%s' and class_id = '%s'"""
+            SELECT CONCAT(Students.first_name, ' ', Students.last_name)
+            AS student_name,
+            CONCAT(Subjects.subject_name, ', ', Classes.class_level, ', ',
+            Professors.first_name, ' ', Professors.last_name)
+            AS class_detail
+            FROM Class_Registrations
+            LEFT JOIN Students
+            ON Class_Registrations.student_id = Students.student_id
+            LEFT JOIN Classes
+            ON Class_Registrations.class_id = Classes.class_id
+            LEFT JOIN Subjects
+            ON Classes.subject_id = Subjects.subject_id
+            LEFT JOIN Professors
+            ON Classes.professor_id = Professors.professor_id
+            WHERE Class_Registrations.student_id = '%s' and
+            Class_Registrations.class_id = '%s'"""
         cursor.execute(query, (student_id, class_id))
         registration = cursor.fetchone()
 
@@ -819,6 +915,27 @@ def edit_registration(student_id: int, class_id: int):
             return render_template("edit_registrations.j2", **values)
 
         if request.method == "POST":
+            form = custom_forms.UpdateRegistrationForm(request.form)
+            first_name, last_name = form.student_name.data.split()
+            update_student_id = helpers.get_student_id_from_name(
+                first_name, last_name
+            )
+
+            subject_name, class_level, professor_name = (
+                form.class_detail.data.split(", ")
+            )
+            subject_id = helpers.get_subject_id_from_name(subject_name)
+            if professor_name:
+                first_name, last_name = professor_name.split()
+                professor_id = helpers.get_professor_id_from_name(
+                    first_name, last_name
+                )
+            else:
+                professor_id = None
+            update_class_id = helpers.get_class_id_from_class_detail(
+                subject_id, class_level, professor_id
+            )
+
             # Query used to update a Class_Registration
             update_query = """
             UPDATE Class_Registrations SET
@@ -829,8 +946,8 @@ def edit_registration(student_id: int, class_id: int):
             cursor.execute(
                 update_query,
                 (
-                    form.student_id.data,
-                    form.class_id.data,
+                    update_student_id,
+                    update_class_id,
                     student_id,
                     class_id,
                 ),

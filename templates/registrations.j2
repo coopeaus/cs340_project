@@ -37,12 +37,12 @@
         <form action="/registrations" method="post" class="form-row align-items-center">
             {{ new_reg.csrf_token }}
             <div class="form-group col-auto">
-                {{ new_reg.student_id.label(class="form-label") }}
-                {{ new_reg.student_id(class="form-control") }}
+                {{ new_reg.student_name.label(class="form-label") }}
+                {{ new_reg.student_name(class="form-control") }}
             </div>
             <div class="form-group col-auto">
-                {{ new_reg.class_id.label(class="form-label") }}
-                {{ new_reg.class_id(class="form-control") }}
+                {{ new_reg.class_detail.label(class="form-label") }}
+                {{ new_reg.class_detail(class="form-control") }}
             </div>
             <div class="form-group col-auto pt-4">
                 {{ new_reg.submit(class="btn btn-primary") }}
