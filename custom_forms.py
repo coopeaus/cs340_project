@@ -84,10 +84,22 @@ class UpdateProfessorForm(FlaskForm):
 class NewHouseForm(FlaskForm):
     """Represents the Create House Form"""
 
-    # Get a list of current professor_ids
-    head_of_house_ids = get_pks_from_table("Professors", "professor_id")
+    db_connection = db.connect_to_database()
+    query_professor_names = """
+        SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
+        AS professor_name FROM Professors;"""
+    cursor = db.execute_query(
+        db_connection=db_connection, query=query_professor_names
+    )
+    professor_names = cursor.fetchall()
+    pname_choices = [
+        professor_name["professor_name"] for professor_name in professor_names
+    ]
+    pname_choices.insert(0, "")
+    cursor.close()
+    db_connection.close()
 
-    head_of_house = SelectField("Head of House", choices=head_of_house_ids)
+    head_of_house = SelectField("Head of House", choices=pname_choices)
     house_name = StringField("House Name")
     house_animal = StringField("House Animal")
     house_colors = StringField("House Colors")
@@ -97,10 +109,22 @@ class NewHouseForm(FlaskForm):
 class UpdateHouseForm(FlaskForm):
     """Represents the Update House Form"""
 
-    # Get a list of current professor_ids
-    head_of_house_ids = get_pks_from_table("Professors", "professor_id")
+    db_connection = db.connect_to_database()
+    query_professor_names = """
+        SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
+        AS professor_name FROM Professors;"""
+    cursor = db.execute_query(
+        db_connection=db_connection, query=query_professor_names
+    )
+    professor_names = cursor.fetchall()
+    pname_choices = [
+        professor_name["professor_name"] for professor_name in professor_names
+    ]
+    pname_choices.insert(0, "")
+    cursor.close()
+    db_connection.close()
 
-    head_of_house = SelectField("Head of House", choices=head_of_house_ids)
+    head_of_house = SelectField("Head of House", choices=pname_choices)
     house_name = StringField("House Name")
     house_animal = StringField("House Animal")
     house_colors = StringField("House Colors")

@@ -6,7 +6,7 @@ import MySQLdb.cursors
 import secrets
 import custom_forms
 import database.db_connector as db
-from helpers import get_house_id_from_name, get_house_name_from_id
+import helpers
 from route_helpers import delete_record
 
 # Citation for the below config, Routes, and Listener
@@ -45,7 +45,7 @@ def students():
             if form.house_name.data == "":
                 house_id = None
             else:
-                house_id = get_house_id_from_name(form.house_name.data)
+                house_id = helpers.get_house_id_from_name(form.house_name.data)
 
             # Insert the new student data
             query = """
@@ -124,7 +124,7 @@ def edit_student(id: int):
         # student dictionary
         house_id = student["house_id"]
         if house_id:
-            student["house_name"] = get_house_name_from_id(house_id)
+            student["house_name"] = helpers.get_house_name_from_id(house_id)
         else:
             student["house_name"] = None
 
@@ -150,7 +150,7 @@ def edit_student(id: int):
             if form.house_name.data == "":
                 house_id = None
             else:
-                house_id = get_house_id_from_name(form.house_name.data)
+                house_id = helpers.get_house_id_from_name(form.house_name.data)
 
             # Query used to update a Student
             update_query = """
@@ -317,12 +317,15 @@ def houses():
         db_connection = db.connect_to_database()
         cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
 
-        # Create the form
-        form = custom_forms.NewHouseForm(
-            request.form if request.method == "POST" else None
-        )
-
         if request.method == "POST":
+            form = custom_forms.NewHouseForm(request.form)
+            if form.head_of_house.data == "":
+                head_of_house = None
+            else:
+                first_name, last_name = form.professor_name.data.split()
+                head_of_house = helpers.get_professor_id_from_name(
+                    first_name, last_name
+                )
 
             # Insert the new house data
             query = """
@@ -332,7 +335,7 @@ def houses():
             cursor.execute(
                 query,
                 (
-                    form.head_of_house.data,
+                    head_of_house,
                     form.house_name.data,
                     form.house_animal.data,
                     form.house_colors.data,
@@ -344,14 +347,22 @@ def houses():
             return redirect("/houses")
 
         elif request.method == "GET":
-            query = "SELECT * FROM Houses;"
+            query = (
+                "SELECT Houses.house_id, "
+                "CONCAT(Professors.first_name, ' ', Professors.last_name) "
+                "AS head_of_house, Houses.house_name, "
+                "Houses.house_animal, Houses.house_colors "
+                "FROM Houses LEFT JOIN Professors "
+                "ON Houses.head_of_house = Professors.professor_id;"
+            )
             cursor = db.execute_query(db_connection=db_connection, query=query)
             houses = cursor.fetchall()
+
             values = {
                 "title": "Houses",
                 "records": houses,
-                "new_house": form,
                 "fkey": list(houses[0].keys())[0],
+                "new_house": custom_forms.NewHouseForm(),
             }
             return render_template("houses.j2", **values)
 
@@ -389,6 +400,16 @@ def edit_house(id: int):
         )
         house = cursor.fetchone()
 
+        # Find the head_of_house's name and add it to the
+        # house dictionary
+        professor_id = house["head_of_house"]
+        if professor_id:
+            house["head_of_house"] = helpers.get_professor_name_from_id(
+                professor_id
+            )
+        else:
+            house["head_of_house"] = None
+
         # Create the form. If we are sending a POST request, create the form
         # appropriately.
         # Unpack the data in house for use as default, pre-filled values
@@ -407,6 +428,15 @@ def edit_house(id: int):
             return render_template("edit_houses.j2", **values)
 
         if request.method == "POST":
+            # Support for nullable professor_id foreign key.
+            if form.head_of_house.data == "":
+                head_of_house = None
+            else:
+                first_name, last_name = form.head_of_house.data.split()
+                head_of_house = helpers.get_professor_id_from_name(
+                    first_name, last_name
+                )
+
             # Query used to update a House
             update_query = """
             UPDATE Houses SET
@@ -419,7 +449,7 @@ def edit_house(id: int):
             cursor.execute(
                 update_query,
                 (
-                    form.head_of_house.data,
+                    head_of_house,
                     form.house_name.data,
                     form.house_animal.data,
                     form.house_colors.data,
