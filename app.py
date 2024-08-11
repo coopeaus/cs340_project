@@ -7,6 +7,7 @@ import secrets
 import custom_forms
 import database.db_connector as db
 from helpers import get_house_id_from_name, get_house_name_from_id
+from route_helpers import delete_record
 
 # Citation for the below config, Routes, and Listener
 # Date: 7/23/24
@@ -83,7 +84,6 @@ def students():
                 "find_form": custom_forms.LookupStudentForm(),
                 "update_form": custom_forms.UpdateStudentForm(),
             }
-            print(values["fkey"])
             return render_template("students.j2", **values)
 
     except Exception as e:
@@ -103,18 +103,8 @@ def delete_student(id: int):
     :param id: The student_id for the Student record to delete
     :type id: int
     """
-    try:
-        db_connection = db.connect_to_database()
-        query = "DELETE FROM Students WHERE student_id = '%s';"
-        cursor = db.execute_query(
-            db_connection=db_connection, query=query, query_params=(id,)
-        )
-        return redirect("/students")
-    except MySQLdb.Error as e:
-        return e
-    finally:
-        cursor.close()
-        db_connection.close()
+    delete_record(id=id, table_name="Students", primary_key_name="student_id")
+    return redirect("/students")
 
 
 @app.route("/edit_Students/<int:id>", methods=["post", "get"])
@@ -254,18 +244,8 @@ def delete_professor(id: int):
     :param id: The professor_id for the Professor record to delete
     :type id: int
     """
-    try:
-        db_connection = db.connect_to_database()
-        query = "DELETE FROM Professors WHERE professor_id = '%s';"
-        cursor = db.execute_query(
-            db_connection=db_connection, query=query, query_params=(id,)
-        )
-        return redirect("/professors")
-    except MySQLdb.Error as e:
-        return e
-    finally:
-        cursor.close()
-        db_connection.close()
+    delete_record(id=id, table_name="Professors", primary_key_name="professor_id")
+    return redirect("/professors")
 
 
 @app.route("/edit_Professors/<int:id>", methods=["post", "get"])
@@ -390,18 +370,8 @@ def delete_house(id: int):
     :param id: The house_id for the House record to delete
     :type id: int
     """
-    try:
-        db_connection = db.connect_to_database()
-        query = "DELETE FROM Houses WHERE house_id = '%s';"
-        cursor = db.execute_query(
-            db_connection=db_connection, query=query, query_params=(id,)
-        )
-        return redirect("/houses")
-    except MySQLdb.Error as e:
-        return e
-    finally:
-        cursor.close()
-        db_connection.close()
+    delete_record(id=id, table_name="Houses", primary_key_name="house_id")
+    return redirect("/houses")
 
 
 @app.route("/edit_Houses/<int:id>", methods=["post", "get"])
@@ -526,18 +496,8 @@ def delete_subject(id: int):
     :param id: The subject_id for the Subject record to delete
     :type id: int
     """
-    try:
-        db_connection = db.connect_to_database()
-        query = "DELETE FROM Subjects WHERE subject_id = '%s';"
-        cursor = db.execute_query(
-            db_connection=db_connection, query=query, query_params=(id,)
-        )
-        return redirect("/subjects")
-    except MySQLdb.Error as e:
-        return e
-    finally:
-        cursor.close()
-        db_connection.close()
+    delete_record(id=id, table_name="Subjects", primary_key_name="subject_id")
+    return redirect("/subjects")
 
 
 @app.route("/edit_Subjects/<int:id>", methods=["post", "get"])
@@ -659,18 +619,8 @@ def delete_class(id: int):
     :param id: The class_id for the Class record to delete
     :type id: int
     """
-    try:
-        db_connection = db.connect_to_database()
-        query = "DELETE FROM Classes WHERE class_id = '%s';"
-        cursor = db.execute_query(
-            db_connection=db_connection, query=query, query_params=(id,)
-        )
-        return redirect("/classes")
-    except MySQLdb.Error as e:
-        return e
-    finally:
-        cursor.close()
-        db_connection.close()
+    delete_record(id=id, table_name="Classes", primary_key_name="class_id")
+    return redirect("/classes")
 
 
 @app.route("/edit_Classes/<int:id>", methods=["post", "get"])
@@ -784,6 +734,8 @@ def delete_registration(student_id: int, class_id: int):
     :param class_id: The class_id for the Class_Registrations record to delete
     :type id: int
     """
+    
+    # No delete helper here, due to composite primary key.
     try:
         db_connection = db.connect_to_database()
         query = """
