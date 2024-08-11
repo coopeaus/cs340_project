@@ -1,6 +1,8 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField
 import database.db_connector as db
+from helpers import get_pks_from_table
+
 
 # Citation for the below classes
 # Date: 7/30/2024
@@ -82,9 +84,10 @@ class UpdateProfessorForm(FlaskForm):
 class NewHouseForm(FlaskForm):
     """Represents the Create House Form"""
 
-    head_of_house = SelectField(
-        "Head of House", choices=[i for i in range(1, 5)]
-    )
+    # Get a list of current professor_ids
+    head_of_house_ids = get_pks_from_table("Professors", "professor_id")
+
+    head_of_house = SelectField("Head of House", choices=head_of_house_ids)
     house_name = StringField("House Name")
     house_animal = StringField("House Animal")
     house_colors = StringField("House Colors")
@@ -94,10 +97,10 @@ class NewHouseForm(FlaskForm):
 class UpdateHouseForm(FlaskForm):
     """Represents the Update House Form"""
 
-    house_id = SelectField("House ID #", choices=[1, 2, 3, 4])
-    head_of_house = SelectField(
-        "Head of House", choices=[i for i in range(1, 5)]
-    )
+    # Get a list of current professor_ids
+    head_of_house_ids = get_pks_from_table("Professors", "professor_id")
+
+    head_of_house = SelectField("Head of House", choices=head_of_house_ids)
     house_name = StringField("House Name")
     house_animal = StringField("House Animal")
     house_colors = StringField("House Colors")
@@ -115,7 +118,6 @@ class NewSubjectForm(FlaskForm):
 class UpdateSubjectForm(FlaskForm):
     """Represents the Update Subject Form"""
 
-    subject_id = SelectField("Subject ID #", choices=[i for i in range(1, 13)])
     subject_name = StringField("Subject Name")
     core_elective = SelectField("Core(1)/Elective(0)", choices=[0, 1])
     submit = SubmitField("Update Subject")
@@ -124,10 +126,13 @@ class UpdateSubjectForm(FlaskForm):
 class NewClassForm(FlaskForm):
     """Represents the Create Class Form"""
 
-    subject_id = SelectField("Subject ID #", choices=[i for i in range(1, 13)])
-    professor_id = SelectField(
-        "Professor ID #", choices=[i for i in range(1, 5)]
-    )
+    # Get Professor ids and Subject ids so fill dropdowns with valid
+    # values.
+    professor_ids = get_pks_from_table("Professors", "professor_id")
+    subject_ids = get_pks_from_table("Subjects", "subject_id")
+
+    subject_id = SelectField("Subject ID #", choices=subject_ids)
+    professor_id = SelectField("Professor ID #", choices=professor_ids)
     class_level = SelectField("Class Level", choices=[i for i in range(1, 8)])
     submit = SubmitField("Add New Class")
 
@@ -135,11 +140,13 @@ class NewClassForm(FlaskForm):
 class UpdateClassForm(FlaskForm):
     """Represents the Update Class Form"""
 
-    class_id = SelectField("Class ID #", choices=[i for i in range(1, 21)])
-    subject_id = SelectField("Subject ID #", choices=[i for i in range(1, 13)])
-    professor_id = SelectField(
-        "Professor ID #", choices=[i for i in range(1, 5)]
-    )
+    # Get Professor ids and Subject ids so fill dropdowns with valid
+    # values.
+    professor_ids = get_pks_from_table("Professors", "professor_id")
+    subject_ids = get_pks_from_table("Subjects", "subject_id")
+
+    subject_id = SelectField("Subject ID #", choices=subject_ids)
+    professor_id = SelectField("Professor ID #", choices=professor_ids)
     class_level = SelectField("Class Level", choices=[i for i in range(1, 8)])
     submit = SubmitField("Update Class")
 
@@ -147,14 +154,22 @@ class UpdateClassForm(FlaskForm):
 class NewRegistrationForm(FlaskForm):
     """Represents the Create Class_Registration Form"""
 
-    student_id = SelectField("Student ID #", choices=[i for i in range(1, 14)])
-    class_id = SelectField("Class ID #", choices=[i for i in range(1, 21)])
+    # Get lists of the IDs necessary for filling the dropdown menus
+    student_ids = get_pks_from_table("Students", "student_id")
+    class_ids = get_pks_from_table("Classes", "class_id")
+
+    student_id = SelectField("Student ID #", choices=student_ids)
+    class_id = SelectField("Class ID #", choices=class_ids)
     submit = SubmitField("Add New Registration")
 
 
 class UpdateRegistrationForm(FlaskForm):
     """Represents the Update Class_Registration Form"""
 
-    student_id = SelectField("Student ID #", choices=[i for i in range(1, 14)])
-    class_id = SelectField("Class ID #", choices=[i for i in range(1, 21)])
+    # Get lists of the IDs necessary for filling the dropdown menus
+    student_ids = get_pks_from_table("Students", "student_id")
+    class_ids = get_pks_from_table("Classes", "class_id")
+
+    student_id = SelectField("Student ID #", choices=student_ids)
+    class_id = SelectField("Class ID #", choices=class_ids)
     submit = SubmitField("Update Registration")

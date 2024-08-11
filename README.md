@@ -115,7 +115,7 @@ This project uses black for formatting, and flake8 for linting.
 
 # README Citation<a name="citation"></a>
 README portions ([Requirements](#requirements), [Setting Up Python Virtual Environment](#venv), [Install Requirements](#reqs)) were reused from a previous project. Following is the required citation for CS340.
-- URL - none, never hosted anywehere, and exists only on my (Austin Cooper's) hard drive.
+- URL - none, never hosted anywhere, and exists only on my (Austin Cooper's) hard drive.
 - Date retrieved - 6/25/24
 - Title - Socket Programming Project 3
 - Type - source code

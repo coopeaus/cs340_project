@@ -1,0 +1,36 @@
+{% extends "base_template.j2" %}
+
+<title>{% block title %} Edit House {% endblock title %}</title>
+
+{% block show_table %}
+{% endblock show_table %}
+
+{% block show_forms %}
+
+    <div class="container">
+        <h2>Update House</h2>
+        <form action="/edit_Houses/{{ records['house_id'] }}" method="post" class="form-row align-items-center">
+            {{ update_form.csrf_token }}
+            <div class="form-group col-auto">
+                {{ update_form.head_of_house.label(class="form-label") }}
+                {{ update_form.head_of_house(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.house_name.label(class="form-label") }}
+                {{ update_form.house_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.house_animal.label(class="form-label") }}
+                {{ update_form.house_animal(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.house_colors.label(class="form-label") }}
+                {{ update_form.house_colors(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ update_form.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+{% endblock show_forms %}

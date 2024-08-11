@@ -1,0 +1,28 @@
+{% extends "base_template.j2" %}
+
+<title>{% block title %} Edit Subject {% endblock title %}</title>
+
+{% block show_table %}
+{% endblock show_table %}
+
+{% block show_forms %}
+
+    <div class="container">
+        <h2>Update Subject</h2>
+        <form action="/edit_Subjects/{{ records['subject_id'] }}" method="post" class="form-row align-items-center">
+            {{ update_form.csrf_token }}
+            <div class="form-group col-auto">
+                {{ update_form.subject_name.label(class="form-label") }}
+                {{ update_form.subject_name(class="form-control") }}
+            </div>
+            <div class="form-group col-auto">
+                {{ update_form.core_elective.label(class="form-label") }}
+                {{ update_form.core_elective(class="form-control") }}
+            </div>
+            <div class="form-group col-auto pt-4">
+                {{ update_form.submit(class="btn btn-primary") }}
+            </div>
+        </div>
+    </div>
+
+{% endblock show_forms %}

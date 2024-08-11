@@ -7,6 +7,7 @@ import secrets
 import custom_forms
 import database.db_connector as db
 from helpers import get_house_id_from_name, get_house_name_from_id
+from route_helpers import delete_record
 
 # Citation for the below config, Routes, and Listener
 # Date: 7/23/24
@@ -83,7 +84,6 @@ def students():
                 "find_form": custom_forms.LookupStudentForm(),
                 "update_form": custom_forms.UpdateStudentForm(),
             }
-            print(values["fkey"])
             return render_template("students.j2", **values)
 
     except Exception as e:
@@ -103,18 +103,8 @@ def delete_student(id: int):
     :param id: The student_id for the Student record to delete
     :type id: int
     """
-    try:
-        db_connection = db.connect_to_database()
-        query = "DELETE FROM Students WHERE student_id = '%s';"
-        cursor = db.execute_query(
-            db_connection=db_connection, query=query, query_params=(id,)
-        )
-        return redirect("/students")
-    except MySQLdb.Error as e:
-        return e
-    finally:
-        cursor.close()
-        db_connection.close()
+    delete_record(id=id, table_name="Students", primary_key_name="student_id")
+    return redirect("/students")
 
 
 @app.route("/edit_Students/<int:id>", methods=["post", "get"])
@@ -234,7 +224,7 @@ def professors():
                 "new_prof": custom_forms.NewProfessorForm(),
                 "update_form": custom_forms.UpdateProfessorForm(),
             }
-            print(values["fkey"])
+
             return render_template("professors.j2", **values)
 
     except Exception as e:
@@ -254,18 +244,10 @@ def delete_professor(id: int):
     :param id: The professor_id for the Professor record to delete
     :type id: int
     """
-    try:
-        db_connection = db.connect_to_database()
-        query = "DELETE FROM Professors WHERE professor_id = '%s';"
-        cursor = db.execute_query(
-            db_connection=db_connection, query=query, query_params=(id,)
-        )
-        return redirect("/professors")
-    except MySQLdb.Error as e:
-        return e
-    finally:
-        cursor.close()
-        db_connection.close()
+    delete_record(
+        id=id, table_name="Professors", primary_key_name="professor_id"
+    )
+    return redirect("/professors")
 
 
 @app.route("/edit_Professors/<int:id>", methods=["post", "get"])
@@ -328,72 +310,378 @@ def edit_professor(id: int):
         db_connection.close()
 
 
-@app.route("/houses")
+@app.route("/houses", methods=["post", "get"])
 def houses():
     """Displays the Houses page and associated CRUD operations"""
     try:
         db_connection = db.connect_to_database()
-        query = "SELECT * FROM Houses;"
-        cursor = db.execute_query(db_connection=db_connection, query=query)
-        houses = cursor.fetchall()
-        values = {
-            "title": "Houses",
-            "records": houses,
-            "new_house": custom_forms.NewHouseForm(),
-            "update_form": custom_forms.UpdateHouseForm(),
-        }
-        return render_template("houses.j2", **values)
-    except MySQLdb.Error as e:
-        # Catch and display any DB errors
+        cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
+
+        # Create the form
+        form = custom_forms.NewHouseForm(
+            request.form if request.method == "POST" else None
+        )
+
+        if request.method == "POST":
+
+            # Insert the new house data
+            query = """
+                INSERT INTO Houses
+                    (head_of_house, house_name, house_animal, house_colors)
+                VALUES (%s, %s, %s, %s);"""
+            cursor.execute(
+                query,
+                (
+                    form.head_of_house.data,
+                    form.house_name.data,
+                    form.house_animal.data,
+                    form.house_colors.data,
+                ),
+            )
+
+            # Commit changes
+            db_connection.commit()
+            return redirect("/houses")
+
+        elif request.method == "GET":
+            query = "SELECT * FROM Houses;"
+            cursor = db.execute_query(db_connection=db_connection, query=query)
+            houses = cursor.fetchall()
+            values = {
+                "title": "Houses",
+                "records": houses,
+                "new_house": form,
+                "fkey": list(houses[0].keys())[0],
+            }
+            return render_template("houses.j2", **values)
+
+    except Exception as e:
+        print(e)
         return e
+
     finally:
-        # Close the cursor and connection.
+        # Close the cursor and db_connection due to stability issues
         cursor.close()
         db_connection.close()
 
 
-@app.route("/subjects")
+@app.route("/delete_Houses/<int:id>")
+def delete_house(id: int):
+    """Remove a specific record from the Houses table
+
+    :param id: The house_id for the House record to delete
+    :type id: int
+    """
+    delete_record(id=id, table_name="Houses", primary_key_name="house_id")
+    return redirect("/houses")
+
+
+@app.route("/edit_Houses/<int:id>", methods=["post", "get"])
+def edit_house(id: int):
+    try:
+        # Create one connection and query to be re-used for both methods
+        db_connection = db.connect_to_database()
+        cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
+
+        query = "SELECT * FROM Houses WHERE house_id = %s;" % (id)
+        cursor.execute(
+            query=query,
+        )
+        house = cursor.fetchone()
+
+        # Create the form. If we are sending a POST request, create the form
+        # appropriately.
+        # Unpack the data in house for use as default, pre-filled values
+        form = custom_forms.UpdateHouseForm(
+            request.form if request.method == "POST" else None, **house
+        )
+
+        if request.method == "GET":
+            # Structured these into a dictionary, to pass in as **kwargs
+            values = {
+                "title": "Houses",
+                "records": house,
+                "fkey": list(house.keys()),
+                "update_form": form,
+            }
+            return render_template("edit_houses.j2", **values)
+
+        if request.method == "POST":
+            # Query used to update a House
+            update_query = """
+            UPDATE Houses SET
+                head_of_house = %s,
+                house_name = %s,
+                house_animal = %s,
+                house_colors = %s
+            WHERE house_id = %s;
+            """
+            cursor.execute(
+                update_query,
+                (
+                    form.head_of_house.data,
+                    form.house_name.data,
+                    form.house_animal.data,
+                    form.house_colors.data,
+                    id,
+                ),
+            )
+
+            # Save changes to DB
+            db_connection.commit()
+            return redirect("/houses")
+
+    except Exception as e:
+        print(e)
+        return e
+
+    finally:
+        cursor.close()
+        db_connection.close()
+
+
+@app.route("/subjects", methods=["post", "get"])
 def subjects():
     """Displays the Subjects page and associated CRUD operations"""
     try:
         db_connection = db.connect_to_database()
-        query = "SELECT * FROM Subjects;"
-        cursor = db.execute_query(db_connection=db_connection, query=query)
-        subjects = cursor.fetchall()
-        values = {
-            "title": "Subjects",
-            "records": subjects,
-            "new_sub": custom_forms.NewSubjectForm(),
-            "update_form": custom_forms.UpdateSubjectForm(),
-        }
-        return render_template("subjects.j2", **values)
-    except MySQLdb.Error as e:
-        # Catch and display any DB errors
+        cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
+
+        # Create the form
+        form = custom_forms.NewSubjectForm(request.form)
+
+        if request.method == "POST":
+            # Insert the new professor data
+            query = """
+                INSERT INTO Subjects (subject_name, core_elective)
+                VALUES (%s, %s);"""
+            cursor.execute(
+                query,
+                (
+                    form.subject_name.data,
+                    form.core_elective.data,
+                ),
+            )
+
+            # Commit changes
+            db_connection.commit()
+            return redirect("/subjects")
+
+        elif request.method == "GET":
+            query = "SELECT * FROM Subjects;"
+            cursor.execute(query=query)
+            subjects = cursor.fetchall()
+
+            # Structured these into a dictionary, to pass in as **kwargs
+            values = {
+                "title": "Subjects",
+                "records": subjects,
+                "fkey": list(subjects[0].keys())[0],
+                "new_sub": form,
+            }
+            return render_template("subjects.j2", **values)
+
+    except Exception as e:
+        print(e)
         return e
+
     finally:
-        # Close the cursor and connection.
+        # Close the cursor and db_connection due to stability issues
         cursor.close()
         db_connection.close()
 
 
-@app.route("/classes")
+@app.route("/delete_Subjects/<int:id>")
+def delete_subject(id: int):
+    """Remove a specific record from the Subjects table
+
+    :param id: The subject_id for the Subject record to delete
+    :type id: int
+    """
+    delete_record(id=id, table_name="Subjects", primary_key_name="subject_id")
+    return redirect("/subjects")
+
+
+@app.route("/edit_Subjects/<int:id>", methods=["post", "get"])
+def edit_subject(id: int):
+    try:
+        # Create one connection and query to be re-used for both methods
+        db_connection = db.connect_to_database()
+        cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
+
+        query = "SELECT * FROM Subjects WHERE subject_id = %s;" % (id)
+        cursor.execute(
+            query=query,
+        )
+        subject = cursor.fetchone()
+
+        # Create the form. If we are sending a POST request, create the form
+        # appropriately.
+        # Unpack the data in subject for use as default, pre-filled values
+        form = custom_forms.UpdateSubjectForm(
+            request.form if request.method == "POST" else None, **subject
+        )
+
+        if request.method == "GET":
+            # Structured these into a dictionary, to pass in as **kwargs
+            values = {
+                "title": "Subjects",
+                "records": subject,
+                "fkey": list(subject.keys()),
+                "update_form": form,
+            }
+            return render_template("edit_subjects.j2", **values)
+
+        if request.method == "POST":
+            # Query used to update a Subject
+            update_query = """
+            UPDATE Subjects SET
+                subject_name = %s,
+                core_elective = %s
+            WHERE subject_id = %s;
+            """
+            cursor.execute(
+                update_query,
+                (
+                    form.subject_name.data,
+                    form.core_elective.data,
+                    id,
+                ),
+            )
+
+            # Save changes to DB
+            db_connection.commit()
+            return redirect("/subjects")
+
+    except Exception as e:
+        print(e)
+        return e
+
+    finally:
+        cursor.close()
+        db_connection.close()
+
+
+@app.route("/classes", methods=["post", "get"])
 def classes():
     """Displays the Classes page and associated CRUD operations"""
     try:
         db_connection = db.connect_to_database()
-        query = "SELECT * FROM Classes;"
-        cursor = db.execute_query(db_connection=db_connection, query=query)
-        classes = cursor.fetchall()
-        values = {
-            "title": "Classes",
-            "records": classes,
-            "new_class": custom_forms.NewClassForm(),
-            "update_form": custom_forms.UpdateClassForm(),
-        }
-        return render_template("classes.j2", **values)
-    except MySQLdb.Error as e:
-        # Catch and display any DB errors
+        cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
+
+        # Create the form
+        form = custom_forms.NewClassForm(request.form)
+
+        if request.method == "POST":
+            # Insert the new class data
+            query = """
+                INSERT INTO Classes (subject_id, professor_id, class_level)
+                VALUES (%s, %s, %s);"""
+            cursor.execute(
+                query,
+                (
+                    form.subject_id.data,
+                    form.professor_id.data,
+                    form.class_level.data,
+                ),
+            )
+
+            # Commit changes
+            db_connection.commit()
+            return redirect("/classes")
+
+        elif request.method == "GET":
+            query = "SELECT * FROM Classes;"
+            cursor.execute(query=query)
+            classes = cursor.fetchall()
+
+            # Structured these into a dictionary, to pass in as **kwargs
+            values = {
+                "title": "Classes",
+                "records": classes,
+                "fkey": list(classes[0].keys())[0],
+                "new_class": form,
+            }
+            return render_template("classes.j2", **values)
+
+    except Exception as e:
+        print(e)
         return e
+
+    finally:
+        # Close the cursor and db_connection due to stability issues
+        cursor.close()
+        db_connection.close()
+
+
+@app.route("/delete_Classes/<int:id>")
+def delete_class(id: int):
+    """Remove a specific record from the Classes table
+
+    :param id: The class_id for the Class record to delete
+    :type id: int
+    """
+    delete_record(id=id, table_name="Classes", primary_key_name="class_id")
+    return redirect("/classes")
+
+
+@app.route("/edit_Classes/<int:id>", methods=["post", "get"])
+def edit_class(id: int):
+    try:
+        # Create one connection and query to be re-used for both methods
+        db_connection = db.connect_to_database()
+        cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
+
+        query = "SELECT * FROM Classes WHERE class_id = %s;" % (id)
+        cursor.execute(
+            query=query,
+        )
+        target_class = cursor.fetchone()
+
+        # Create the form. If we are sending a POST request, create the form
+        # appropriately.
+        # Unpack the data in target_class for use as default, pre-filled values
+        form = custom_forms.UpdateClassForm(
+            request.form if request.method == "POST" else None, **target_class
+        )
+
+        if request.method == "GET":
+            # Structured these into a dictionary, to pass in as **kwargs
+            values = {
+                "title": "Classes",
+                "records": target_class,
+                "fkey": list(target_class.keys()),
+                "update_form": form,
+            }
+            return render_template("edit_classes.j2", **values)
+
+        if request.method == "POST":
+            # Query used to update a Subject
+            update_query = """
+            UPDATE Classes SET
+                subject_id = %s,
+                professor_id = %s,
+                class_level = %s
+            WHERE class_id = %s;
+            """
+            cursor.execute(
+                update_query,
+                (
+                    form.subject_id.data,
+                    form.professor_id.data,
+                    form.class_level.data,
+                    id,
+                ),
+            )
+
+            # Save changes to DB
+            db_connection.commit()
+            return redirect("/classes")
+
+    except Exception as e:
+        print(e)
+        return e
+
     finally:
         cursor.close()
         db_connection.close()
@@ -448,6 +736,8 @@ def delete_registration(student_id: int, class_id: int):
     :param class_id: The class_id for the Class_Registrations record to delete
     :type id: int
     """
+
+    # No delete helper here, due to composite primary key.
     try:
         db_connection = db.connect_to_database()
         query = """

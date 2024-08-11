@@ -63,3 +63,43 @@ def get_house_name_from_id(house_id: int) -> str:
         # Clean up connections
         cursor.close()
         db_connection.close()
+
+
+def get_pks_from_table(table_name: str, primary_key_name: str) -> list[int]:
+    """Return a list of primary keys, given the table name and primary key
+        name.
+
+    :param table_name: The name of the table to get primary keys from.
+    :type tablename: str
+    :param primary_key_name: The primary key name, ex: 'student_id'
+    :type primary_key_name: str
+    :return: A list of primary keys for the given table
+    :rtype: list[int]
+    """
+    try:
+        db_connection = db.connect_to_database()
+        cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
+
+        # Get Primary Keys
+        query = f"""
+            SELECT {primary_key_name} from {table_name};
+        """
+        cursor.execute(query)
+        pks_found = cursor.fetchall()
+        pks = []
+
+        # fetchall returns a tuple of dicts. Access each item of the tuple,
+        # then extract the id numbers
+        for pair in pks_found:
+            for label, value in pair.items():
+                pks.append(value)
+
+        return pks
+
+    except MySQLdb.Error as e:
+        print(e)
+        raise e
+
+    finally:
+        cursor.close()
+        db_connection.close()
