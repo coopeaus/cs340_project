@@ -9,12 +9,12 @@
         <form action="/classes" method="post" class="form-row align-items-center">
             {{ new_class.csrf_token }}
             <div class="form-group col-auto">
-                {{ new_class.subject_id.label(class="form-label") }}
-                {{ new_class.subject_id(class="form-control") }}
+                {{ new_class.subject_name.label(class="form-label") }}
+                {{ new_class.subject_name(class="form-control") }}
             </div>
             <div class="form-group col-auto">
-                {{ new_class.professor_id.label(class="form-label") }}
-                {{ new_class.professor_id(class="form-control") }}
+                {{ new_class.professor_name.label(class="form-label") }}
+                {{ new_class.professor_name(class="form-control") }}
             </div>
             <div class="form-group col-auto">
                 {{ new_class.class_level.label(class="form-label") }}

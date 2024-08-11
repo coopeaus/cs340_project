@@ -1,7 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField, SelectField
 import database.db_connector as db
-from helpers import get_pks_from_table
 
 
 # Citation for the below classes
@@ -150,13 +149,33 @@ class UpdateSubjectForm(FlaskForm):
 class NewClassForm(FlaskForm):
     """Represents the Create Class Form"""
 
-    # Get Professor ids and Subject ids so fill dropdowns with valid
-    # values.
-    professor_ids = get_pks_from_table("Professors", "professor_id")
-    subject_ids = get_pks_from_table("Subjects", "subject_id")
+    db_connection = db.connect_to_database()
+    query_professor_names = """
+        SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
+        AS professor_name FROM Professors;"""
+    cursor = db.execute_query(
+        db_connection=db_connection, query=query_professor_names
+    )
+    professor_names = cursor.fetchall()
+    pname_choices = [
+        professor_name["professor_name"] for professor_name in professor_names
+    ]
+    pname_choices.insert(0, "")
 
-    subject_id = SelectField("Subject ID #", choices=subject_ids)
-    professor_id = SelectField("Professor ID #", choices=professor_ids)
+    query_subject_names = """
+        SELECT Subjects.subject_name FROM Subjects;"""
+    cursor = db.execute_query(
+        db_connection=db_connection, query=query_subject_names
+    )
+    subject_names = cursor.fetchall()
+    sname_choices = [
+        subject_name["subject_name"] for subject_name in subject_names
+    ]
+    cursor.close()
+    db_connection.close()
+
+    subject_name = SelectField("Subject Name", choices=sname_choices)
+    professor_name = SelectField("Professor Name", choices=pname_choices)
     class_level = SelectField("Class Level", choices=[i for i in range(1, 8)])
     submit = SubmitField("Add New Class")
 
@@ -164,13 +183,33 @@ class NewClassForm(FlaskForm):
 class UpdateClassForm(FlaskForm):
     """Represents the Update Class Form"""
 
-    # Get Professor ids and Subject ids so fill dropdowns with valid
-    # values.
-    professor_ids = get_pks_from_table("Professors", "professor_id")
-    subject_ids = get_pks_from_table("Subjects", "subject_id")
+    db_connection = db.connect_to_database()
+    query_professor_names = """
+        SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
+        AS professor_name FROM Professors;"""
+    cursor = db.execute_query(
+        db_connection=db_connection, query=query_professor_names
+    )
+    professor_names = cursor.fetchall()
+    pname_choices = [
+        professor_name["professor_name"] for professor_name in professor_names
+    ]
+    pname_choices.insert(0, "")
 
-    subject_id = SelectField("Subject ID #", choices=subject_ids)
-    professor_id = SelectField("Professor ID #", choices=professor_ids)
+    query_subject_names = """
+        SELECT Subjects.subject_name FROM Subjects;"""
+    cursor = db.execute_query(
+        db_connection=db_connection, query=query_subject_names
+    )
+    subject_names = cursor.fetchall()
+    sname_choices = [
+        subject_name["subject_name"] for subject_name in subject_names
+    ]
+    cursor.close()
+    db_connection.close()
+
+    subject_name = SelectField("Subject Name", choices=sname_choices)
+    professor_name = SelectField("Professor Name", choices=pname_choices)
     class_level = SelectField("Class Level", choices=[i for i in range(1, 8)])
     submit = SubmitField("Update Class")
 
@@ -178,22 +217,74 @@ class UpdateClassForm(FlaskForm):
 class NewRegistrationForm(FlaskForm):
     """Represents the Create Class_Registration Form"""
 
-    # Get lists of the IDs necessary for filling the dropdown menus
-    student_ids = get_pks_from_table("Students", "student_id")
-    class_ids = get_pks_from_table("Classes", "class_id")
+    db_connection = db.connect_to_database()
+    query_student_names = """
+        SELECT CONCAT(Students.first_name, ' ', Students.last_name)
+        AS student_name FROM Students;"""
+    cursor = db.execute_query(
+        db_connection=db_connection, query=query_student_names
+    )
+    student_names = cursor.fetchall()
+    stname_choices = [
+        student_name["student_name"] for student_name in student_names
+    ]
 
-    student_id = SelectField("Student ID #", choices=student_ids)
-    class_id = SelectField("Class ID #", choices=class_ids)
+    query_class_details = """
+        SELECT CONCAT(Subjects.subject_name, ', ', Classes.class_level, ', ',
+        Professors.first_name, ' ', Professors.last_name) AS class_detail
+        FROM Classes
+        LEFT JOIN Subjects
+        ON Classes.subject_id = Subjects.subject_id
+        LEFT JOIN Professors
+        ON Classes.professor_id = Professors.professor_id;"""
+    cursor = db.execute_query(
+        db_connection=db_connection, query=query_class_details
+    )
+    class_details = cursor.fetchall()
+    cdetail_choices = [
+        class_detail["class_detail"] for class_detail in class_details
+    ]
+    cursor.close()
+    db_connection.close()
+
+    student_name = SelectField("Student Name", choices=stname_choices)
+    class_detail = SelectField("Class Detail", choices=cdetail_choices)
     submit = SubmitField("Add New Registration")
 
 
 class UpdateRegistrationForm(FlaskForm):
     """Represents the Update Class_Registration Form"""
 
-    # Get lists of the IDs necessary for filling the dropdown menus
-    student_ids = get_pks_from_table("Students", "student_id")
-    class_ids = get_pks_from_table("Classes", "class_id")
+    db_connection = db.connect_to_database()
+    query_student_names = """
+        SELECT CONCAT(Students.first_name, ' ', Students.last_name)
+        AS student_name FROM Students;"""
+    cursor = db.execute_query(
+        db_connection=db_connection, query=query_student_names
+    )
+    student_names = cursor.fetchall()
+    stname_choices = [
+        student_name["student_name"] for student_name in student_names
+    ]
 
-    student_id = SelectField("Student ID #", choices=student_ids)
-    class_id = SelectField("Class ID #", choices=class_ids)
+    query_class_details = """
+        SELECT CONCAT(Subjects.subject_name, ', ', Classes.class_level, ', ',
+        Professors.first_name, ' ', Professors.last_name) AS class_detail
+        FROM Classes
+        LEFT JOIN Subjects
+        ON Classes.subject_id = Subjects.subject_id
+        LEFT JOIN Professors
+        ON Classes.professor_id = Professors.professor_id;"""
+    cursor = db.execute_query(
+        db_connection=db_connection, query=query_class_details
+    )
+    class_details = cursor.fetchall()
+    cdetail_choices = [
+        class_detail["class_detail"] for class_detail in class_details
+    ]
+    cursor.close()
+    db_connection.close()
+
+    student_name = SelectField("Student Name", choices=stname_choices)
+    class_detail = SelectField("Class Detail", choices=cdetail_choices)
     submit = SubmitField("Update Registration")

@@ -69,7 +69,7 @@ def get_professor_id_from_name(first_name: str, last_name: str) -> int:
     """Given first_name and last_name, return the professor_id
 
     :param first_name and last_name: A Hogwarts professor name
-    :type last_name: str
+    :type first_name and last_name: str
     :raises e: MySQLdb errors
     :return: The professor_id number corresponding to
             the first_name and last_name
@@ -82,7 +82,7 @@ def get_professor_id_from_name(first_name: str, last_name: str) -> int:
         # The SQL query used to find the professor_id
         professor_query = """
             SELECT professor_id FROM Professors WHERE first_name = %s
-            AND last_name =%s;"""
+            AND last_name = %s;"""
         cursor.execute(
             professor_query,
             (
@@ -117,7 +117,7 @@ def get_professor_name_from_id(professor_id: int) -> str:
         db_connection = db.connect_to_database()
         cursor = db_connection.cursor()
 
-        # The SQL query used to find the house_name
+        # The SQL query used to find the professor_name
         professor_query = """
             SELECT first_name, last_name from Professors
             WHERE professor_id = %s;""" % (
@@ -128,6 +128,186 @@ def get_professor_name_from_id(professor_id: int) -> str:
         professor_name = professor[0] + " " + professor[1]
 
         return professor_name
+
+    except MySQLdb.Error as e:
+        print(e)
+        raise e
+
+    finally:
+        # Clean up connections
+        cursor.close()
+        db_connection.close()
+
+
+def get_subject_id_from_name(subject_name: str) -> int:
+    """Given a subject_name, return the subject_id
+
+    :param subject_name: A Hogwarts subject name
+    :type subject_name: str
+    :raises e: MySQLdb errors
+    :return: The subject_id number corresponding to the subject_name
+    :rtype: int
+    """
+    try:
+        db_connection = db.connect_to_database()
+        cursor = db_connection.cursor()
+
+        # The SQL query used to find the subject_id
+        subject_query = """
+            SELECT subject_id FROM Subjects WHERE subject_name = %s;"""
+        cursor.execute(subject_query, (subject_name,))
+        subject_id = cursor.fetchone()
+
+        return subject_id[0]
+
+    except MySQLdb.Error as e:
+        print(e)
+        raise e
+
+    finally:
+        # Clean up connections
+        cursor.close()
+        db_connection.close()
+
+
+def get_subject_name_from_id(subject_id: int) -> str:
+    """Given a subject_id, return the subject_name
+
+    :param subject_id: A Hogwarts subject subject_id
+    :type subject_id: int
+    :raises e: MySQLdb errors
+    :return: The subject_name corresponding to the subject_id
+    :rtype: str
+    """
+    try:
+        db_connection = db.connect_to_database()
+        cursor = db_connection.cursor()
+
+        # The SQL query used to find the subject_name
+        subject_query = """
+            SELECT subject_name from Subjects WHERE subject_id = %s;""" % (
+            subject_id
+        )
+        cursor.execute(subject_query)
+        subject = cursor.fetchone()
+
+        return subject[0]
+
+    except MySQLdb.Error as e:
+        print(e)
+        raise e
+
+    finally:
+        # Clean up connections
+        cursor.close()
+        db_connection.close()
+
+
+def get_student_id_from_name(first_name: str, last_name: str) -> int:
+    """Given first_name and last_name, return the student_id
+
+    :param first_name and last_name: A Hogwarts student name
+    :type first_name and last_name: str
+    :raises e: MySQLdb errors
+    :return: The student_id number corresponding to
+            the first_name and last_name
+    :rtype: int
+    """
+    try:
+        db_connection = db.connect_to_database()
+        cursor = db_connection.cursor()
+
+        # The SQL query used to find the student_id
+        student_query = """
+            SELECT student_id FROM Students WHERE first_name = %s
+            AND last_name = %s;"""
+        cursor.execute(
+            student_query,
+            (
+                first_name,
+                last_name,
+            ),
+        )
+        student_id = cursor.fetchone()
+
+        return student_id[0]
+
+    except MySQLdb.Error as e:
+        print(e)
+        raise e
+
+    finally:
+        # Clean up connections
+        cursor.close()
+        db_connection.close()
+
+
+def get_student_name_from_id(student_id: int) -> str:
+    """Given a student_id, return the student_name
+
+    :param professor_id: A Hogwarts professor student_id
+    :type student_id: int
+    :raises e: MySQLdb errors
+    :return: The student_name corresponding to the student_id
+    :rtype: str
+    """
+    try:
+        db_connection = db.connect_to_database()
+        cursor = db_connection.cursor()
+
+        # The SQL query used to find the student_name
+        student_query = """
+            SELECT first_name, last_name from Students
+            WHERE student_id = %s;""" % (
+            student_id
+        )
+        cursor.execute(student_query)
+        student = cursor.fetchone()
+        student_name = student[0] + " " + student[1]
+
+        return student_name
+
+    except MySQLdb.Error as e:
+        print(e)
+        raise e
+
+    finally:
+        # Clean up connections
+        cursor.close()
+        db_connection.close()
+
+
+def get_class_id_from_class_detail(
+    subject_id: int, class_level: int, professor_id: int
+) -> int:
+    """Given subject_id, class_level and professor_id, return the class_id
+
+    :param subject_id, class_level and professor_id
+    :type subject_id, class_level and professor_id: int
+    :raises e: MySQLdb errors
+    :return: The class_id number corresponding to
+            the subject_id, class_level and professor_id
+    :rtype: int
+    """
+    try:
+        db_connection = db.connect_to_database()
+        cursor = db_connection.cursor()
+
+        # The SQL query used to find the class_id
+        class_query = """
+            SELECT class_id FROM Classes WHERE subject_id = %s
+            AND class_level = %s AND professor_id = %s;"""
+        cursor.execute(
+            class_query,
+            (
+                subject_id,
+                class_level,
+                professor_id,
+            ),
+        )
+        class_id = cursor.fetchone()
+
+        return class_id[0]
 
     except MySQLdb.Error as e:
         print(e)
