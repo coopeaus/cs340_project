@@ -66,7 +66,8 @@ def get_house_name_from_id(house_id: int) -> str:
 
 
 def get_pks_from_table(table_name: str, primary_key_name: str) -> list[int]:
-    """Return a list of primary keys, given the table name and primary key name.
+    """Return a list of primary keys, given the table name and primary key
+        name.
 
     :param table_name: The name of the table to get primary keys from.
     :type tablename: str
@@ -102,4 +103,3 @@ def get_pks_from_table(table_name: str, primary_key_name: str) -> list[int]:
     finally:
         cursor.close()
         db_connection.close()
-

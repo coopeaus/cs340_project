@@ -244,7 +244,9 @@ def delete_professor(id: int):
     :param id: The professor_id for the Professor record to delete
     :type id: int
     """
-    delete_record(id=id, table_name="Professors", primary_key_name="professor_id")
+    delete_record(
+        id=id, table_name="Professors", primary_key_name="professor_id"
+    )
     return redirect("/professors")
 
 
@@ -734,7 +736,7 @@ def delete_registration(student_id: int, class_id: int):
     :param class_id: The class_id for the Class_Registrations record to delete
     :type id: int
     """
-    
+
     # No delete helper here, due to composite primary key.
     try:
         db_connection = db.connect_to_database()
