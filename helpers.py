@@ -65,6 +65,80 @@ def get_house_name_from_id(house_id: int) -> str:
         db_connection.close()
 
 
+def get_professor_id_from_name(first_name: str, last_name: str) -> int:
+    """Given first_name and last_name, return the professor_id
+
+    :param first_name and last_name: A Hogwarts professor name
+    :type last_name: str
+    :raises e: MySQLdb errors
+    :return: The professor_id number corresponding to
+            the first_name and last_name
+    :rtype: int
+    """
+    try:
+        db_connection = db.connect_to_database()
+        cursor = db_connection.cursor()
+
+        # The SQL query used to find the professor_id
+        professor_query = """
+            SELECT professor_id FROM Professors WHERE first_name = %s
+            AND last_name =%s;"""
+        cursor.execute(
+            professor_query,
+            (
+                first_name,
+                last_name,
+            ),
+        )
+        professor_id = cursor.fetchone()
+
+        return professor_id[0]
+
+    except MySQLdb.Error as e:
+        print(e)
+        raise e
+
+    finally:
+        # Clean up connections
+        cursor.close()
+        db_connection.close()
+
+
+def get_professor_name_from_id(professor_id: int) -> str:
+    """Given a professor_id, return the professor_name
+
+    :param professor_id: A Hogwarts professor professor_id
+    :type professor_id: int
+    :raises e: MySQLdb errors
+    :return: The professor_name corresponding to the professor_id
+    :rtype: str
+    """
+    try:
+        db_connection = db.connect_to_database()
+        cursor = db_connection.cursor()
+
+        # The SQL query used to find the house_name
+        professor_query = """
+            SELECT first_name, last_name from Professors
+            WHERE professor_id = %s;""" % (
+            professor_id
+        )
+        cursor.execute(professor_query)
+        professor = cursor.fetchone()
+        professor_name = professor[0] + " " + professor[1]
+
+        return professor_name
+
+    except MySQLdb.Error as e:
+        print(e)
+        raise e
+
+    finally:
+        # Clean up connections
+        cursor.close()
+        db_connection.close()
+
+
 def get_pks_from_table(table_name: str, primary_key_name: str) -> list[int]:
     """Return a list of primary keys, given the table name and primary key
         name.
