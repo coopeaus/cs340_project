@@ -1091,7 +1091,8 @@ def edit_registration(student_id: int, class_id: int):
         """
         cursor.execute(query, (student_id, class_id))
         registration = cursor.fetchone()
-
+        registration["student_id"] = student_id
+        registration["class_id"] = class_id
         # Create the form. If we are sending a POST request, create the form
         # appropriately.
         # Unpack the data in students for use as default, pre-filled values
