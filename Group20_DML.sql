@@ -141,3 +141,40 @@ DELETE FROM Class_Registrations WHERE student_id = :student_ID_selected_from_reg
 -- drop down menus
 SELECT CONCAT(Students.first_name, ' ', Students.last_name) AS student_name FROM Students;
 SELECT CONCAT(Subjects.subject_name, ', ', Classes.class_level, ', ', (CASE WHEN Classes.professor_id IS NULL THEN 'None' ELSE CONCAT(Professors.first_name, ' ', Professors.last_name) END)) AS class_detail FROM Classes LEFT JOIN Subjects ON Classes.subject_id = Subjects.subject_id LEFT JOIN Professors ON Classes.professor_id = Professors.professor_id;
+
+--
+-- for helper functions
+--
+
+-- get_house_id_from_name
+SELECT house_id FROM Houses WHERE house_name = %s;
+
+-- get_house_name_from_id
+SELECT house_name from Houses WHERE house_id = %s;
+
+-- get_professor_id_from_name
+SELECT professor_id FROM Professors WHERE first_name = %s AND last_name = %s;
+
+-- get_professor_name_from_id
+SELECT first_name, last_name from Professors WHERE professor_id = %s;
+
+-- get_subject_id_from_name
+SELECT subject_id FROM Subjects WHERE subject_name = %s;
+
+-- get_subject_name_from_id
+SELECT subject_name from Subjects WHERE subject_id = %s;
+
+-- get_student_id_from_name
+SELECT student_id FROM Students WHERE first_name = %s AND last_name = %s;
+
+-- get_student_name_from_id
+SELECT first_name, last_name from Students WHERE student_id = %s;
+
+-- get_class_id_from_class_detail
+SELECT class_id FROM Classes WHERE subject_id = %s AND class_level = %s AND (CASE WHEN Classes.professor_id IS NOT NULL THEN professor_id = %s ELSE ISNULL(professor_id) END);
+
+-- get_pks_from_table
+SELECT {primary_key_name} from {table_name};
+
+-- delete_record
+DELETE FROM {table_name} WHERE {primary_key_name} = '%s';

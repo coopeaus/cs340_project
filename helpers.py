@@ -305,7 +305,11 @@ def get_class_id_from_class_detail(
         # The SQL query used to find the class_id
         class_query = """
         SELECT class_id FROM Classes WHERE subject_id = %s
-        AND class_level = %s AND professor_id = %s;
+        AND class_level = %s AND
+        (CASE
+            WHEN Classes.professor_id IS NOT NULL THEN professor_id = %s
+            ELSE ISNULL(professor_id)
+        END);
         """
         cursor.execute(
             class_query,
