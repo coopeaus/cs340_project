@@ -121,3 +121,27 @@ README portions ([Requirements](#requirements), [Setting Up Python Virtual Envir
 - Type - source code
 - Author - Austin Cooper
 - Code version - N/A
+
+Citation for the app.py config, Routes, and Listener
+- Date: 7/23/24
+- Adapted from:
+- The main idea and organization was adapted from:
+- Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
+
+Citation for custom_forms.py classes
+- Date: 7/30/2024
+- Adapted from:
+- Examples in WTForms documentation
+- Source URL: https://wtforms.readthedocs.io/en/3.1.x/fields/
+
+Citation for db_connector.py
+- Date: 7/24/24
+- Copied from
+- Source URL: https://github.com/osu-cs340-ecampus/flask-starter-app
+
+
+Citation _nav.j2 navbar
+- Date: 7/23/2024
+- Adapted from:
+- Idea for using a for loop came from Jinja docs
+- Source URL: https://jinja.palletsprojects.com/en/3.0.x/templates/
