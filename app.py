@@ -39,9 +39,25 @@ def students():
     try:
         db_connection = db.connect_to_database()
         cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
+        form = custom_forms.NewStudentForm(
+            request.form if request.method == "POST" else None
+        )
 
+        # Get house choices for the house form
+        query_house_names = "SELECT house_name FROM Houses;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query_house_names
+        )
+        house_names = cursor.fetchall()
+        hname_choices = [
+            house_name["house_name"] for house_name in house_names
+        ]
+        hname_choices.insert(0, "")
+        form.house_name.choices = hname_choices
+
+        # Handle post requests
         if request.method == "POST":
-            form = custom_forms.NewStudentForm(request.form)
+
             if form.house_name.data == "":
                 house_id = None
             else:
@@ -65,6 +81,7 @@ def students():
             db_connection.commit()
             return redirect("/students")
 
+        # Handle GET requests
         elif request.method == "GET":
             query = """
                 SELECT Students.student_id, Students.first_name,
@@ -79,9 +96,7 @@ def students():
                 "title": "Students",
                 "records": students,
                 "fkey": list(students[0].keys())[0],
-                "enroll_form": custom_forms.NewStudentForm(),
-                "find_form": custom_forms.LookupStudentForm(),
-                "update_form": custom_forms.UpdateStudentForm(),
+                "enroll_form": form,
             }
             return render_template("students.j2", **values)
 
@@ -134,6 +149,20 @@ def edit_student(id: int):
             request.form if request.method == "POST" else None, **student
         )
 
+        # Get house names for the form choices
+        query_house_names = "SELECT house_name FROM Houses;"
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query_house_names
+        )
+        house_names = cursor.fetchall()
+        hname_choices = [
+            house_name["house_name"] for house_name in house_names
+        ]
+        hname_choices.insert(0, "")
+
+        form.house_name.choices = hname_choices
+
+        # Handle GET requests
         if request.method == "GET":
             # Structured these into a dictionary, to pass in as **kwargs
             values = {
@@ -144,6 +173,7 @@ def edit_student(id: int):
             }
             return render_template("edit_students.j2", **values)
 
+        # Handle POST requests
         if request.method == "POST":
             # Support for nullable house_id foreign key.
             if form.house_name.data == "":
@@ -315,13 +345,32 @@ def houses():
     try:
         db_connection = db.connect_to_database()
         cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
+        form = custom_forms.NewHouseForm(
+            request.form if request.method == "POST" else None
+        )
 
+        # Get professor names for the drop down menu choices
+        query_professor_names = """
+            SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
+            AS professor_name FROM Professors;"""
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query_professor_names
+        )
+        professor_names = cursor.fetchall()
+        pname_choices = [
+            professor_name["professor_name"]
+            for professor_name in professor_names
+        ]
+        pname_choices.insert(0, "")
+        form.head_of_house.choices = pname_choices
+
+        # Handle POST requests
         if request.method == "POST":
-            form = custom_forms.NewHouseForm(request.form)
+
             if form.head_of_house.data == "":
                 head_of_house = None
             else:
-                first_name, last_name = form.professor_name.data.split()
+                first_name, last_name = form.head_of_house.data.split()
                 head_of_house = helpers.get_professor_id_from_name(
                     first_name, last_name
                 )
@@ -345,6 +394,7 @@ def houses():
             db_connection.commit()
             return redirect("/houses")
 
+        # Handle GET requests
         elif request.method == "GET":
             query = """
                 SELECT Houses.house_id,
@@ -360,7 +410,7 @@ def houses():
                 "title": "Houses",
                 "records": houses,
                 "fkey": list(houses[0].keys())[0],
-                "new_house": custom_forms.NewHouseForm(),
+                "new_house": form,
             }
             return render_template("houses.j2", **values)
 
@@ -415,6 +465,23 @@ def edit_house(id: int):
             request.form if request.method == "POST" else None, **house
         )
 
+        # Get professor names for dropdown menu choices
+        query_professor_names = """
+            SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
+            AS professor_name FROM Professors;"""
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query_professor_names
+        )
+        professor_names = cursor.fetchall()
+        pname_choices = [
+            professor_name["professor_name"]
+            for professor_name in professor_names
+        ]
+        pname_choices.insert(0, "")
+
+        form.head_of_house.choices = pname_choices
+
+        # Handle GET requests
         if request.method == "GET":
             # Structured these into a dictionary, to pass in as **kwargs
             values = {
@@ -425,6 +492,7 @@ def edit_house(id: int):
             }
             return render_template("edit_houses.j2", **values)
 
+        # Handle POST requests
         if request.method == "POST":
             # Support for nullable professor_id foreign key.
             if form.head_of_house.data == "":
@@ -597,8 +665,41 @@ def classes():
         db_connection = db.connect_to_database()
         cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
 
+        form = custom_forms.NewClassForm(
+            request.form if request.method == "POST" else None
+        )
+
+        # Get professor names to prefill dropdown choices
+        query_professor_names = """
+            SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
+            AS professor_name FROM Professors;"""
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query_professor_names
+        )
+        professor_names = cursor.fetchall()
+        pname_choices = [
+            professor_name["professor_name"]
+            for professor_name in professor_names
+        ]
+        pname_choices.insert(0, "")
+
+        # Get subject names to prefill dropdown choices
+        query_subject_names = """
+            SELECT Subjects.subject_name FROM Subjects;"""
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query_subject_names
+        )
+        subject_names = cursor.fetchall()
+        sname_choices = [
+            subject_name["subject_name"] for subject_name in subject_names
+        ]
+
+        form.subject_name.choices = sname_choices
+        form.professor_name.choices = pname_choices
+
+        # Handle POST requests
         if request.method == "POST":
-            form = custom_forms.NewClassForm(request.form)
+
             if form.professor_name.data == "":
                 professor_id = None
             else:
@@ -627,6 +728,7 @@ def classes():
             db_connection.commit()
             return redirect("/classes")
 
+        # Handle GET requests
         elif request.method == "GET":
             query = """
                 SELECT Classes.class_id, Subjects.subject_name AS subject_name,
@@ -645,7 +747,7 @@ def classes():
                 "title": "Classes",
                 "records": classes,
                 "fkey": list(classes[0].keys())[0],
-                "new_class": custom_forms.NewClassForm(),
+                "new_class": form,
             }
             return render_template("classes.j2", **values)
 
@@ -710,6 +812,35 @@ def edit_class(id: int):
             request.form if request.method == "POST" else None, **target_class
         )
 
+        # Get professor names to prefill dropdown choices
+        query_professor_names = """
+            SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
+            AS professor_name FROM Professors;"""
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query_professor_names
+        )
+        professor_names = cursor.fetchall()
+        pname_choices = [
+            professor_name["professor_name"]
+            for professor_name in professor_names
+        ]
+        pname_choices.insert(0, "")
+
+        # Get subject names to prefill dropdown choices
+        query_subject_names = """
+            SELECT Subjects.subject_name FROM Subjects;"""
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query_subject_names
+        )
+        subject_names = cursor.fetchall()
+        sname_choices = [
+            subject_name["subject_name"] for subject_name in subject_names
+        ]
+
+        form.subject_name.choices = sname_choices
+        form.professor_name.choices = pname_choices
+
+        # Handle GET requests
         if request.method == "GET":
             # Structured these into a dictionary, to pass in as **kwargs
             values = {
@@ -720,6 +851,7 @@ def edit_class(id: int):
             }
             return render_template("edit_classes.j2", **values)
 
+        # Handle POST requests
         if request.method == "POST":
             # Support for nullable professor_id foreign key.
             if form.professor_name.data == "":
@@ -771,6 +903,42 @@ def registrations():
         db_connection = db.connect_to_database()
         cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
 
+        form = custom_forms.NewRegistrationForm(
+            request.form if request.method == "POST" else None
+        )
+
+        # Get student names for prefilling data
+        query_student_names = """
+            SELECT CONCAT(Students.first_name, ' ', Students.last_name)
+            AS student_name FROM Students;"""
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query_student_names
+        )
+        student_names = cursor.fetchall()
+        stname_choices = [
+            student_name["student_name"] for student_name in student_names
+        ]
+
+        # Get class details for prefilling data
+        query_class_details = """
+        SELECT CONCAT(Subjects.subject_name, ', ', Classes.class_level, ', ',
+        Professors.first_name, ' ', Professors.last_name) AS class_detail
+        FROM Classes
+        LEFT JOIN Subjects
+        ON Classes.subject_id = Subjects.subject_id
+        LEFT JOIN Professors
+        ON Classes.professor_id = Professors.professor_id;"""
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query_class_details
+        )
+        class_details = cursor.fetchall()
+        cdetail_choices = [
+            class_detail["class_detail"] for class_detail in class_details
+        ]
+
+        form.student_name.choices = stname_choices
+        form.class_detail.choices = cdetail_choices
+
         if request.method == "GET":
             # Display the table
             query = """
@@ -794,12 +962,12 @@ def registrations():
             values = {
                 "title": "Registrations",
                 "records": registrations,
-                "new_reg": custom_forms.NewRegistrationForm(),
+                "new_reg": form,
             }
             return render_template("registrations.j2", **values)
 
         elif request.method == "POST":
-            form = custom_forms.NewRegistrationForm(request.form)
+
             first_name, last_name = form.student_name.data.split()
             student_id = helpers.get_student_id_from_name(
                 first_name, last_name
@@ -904,6 +1072,38 @@ def edit_registration(student_id: int, class_id: int):
         form = custom_forms.UpdateRegistrationForm(
             request.form if request.method == "POST" else None, **registration
         )
+
+        # Get student names for prefilling data
+        query_student_names = """
+            SELECT CONCAT(Students.first_name, ' ', Students.last_name)
+            AS student_name FROM Students;"""
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query_student_names
+        )
+        student_names = cursor.fetchall()
+        stname_choices = [
+            student_name["student_name"] for student_name in student_names
+        ]
+
+        # Get class details for prefilling data
+        query_class_details = """
+        SELECT CONCAT(Subjects.subject_name, ', ', Classes.class_level, ', ',
+        Professors.first_name, ' ', Professors.last_name) AS class_detail
+        FROM Classes
+        LEFT JOIN Subjects
+        ON Classes.subject_id = Subjects.subject_id
+        LEFT JOIN Professors
+        ON Classes.professor_id = Professors.professor_id;"""
+        cursor = db.execute_query(
+            db_connection=db_connection, query=query_class_details
+        )
+        class_details = cursor.fetchall()
+        cdetail_choices = [
+            class_detail["class_detail"] for class_detail in class_details
+        ]
+
+        form.student_name.choices = stname_choices
+        form.class_detail.choices = cdetail_choices
 
         if request.method == "GET":
             # Structured these into a dictionary, to pass in as **kwargs
