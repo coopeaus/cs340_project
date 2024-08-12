@@ -17,7 +17,8 @@ def get_house_id_from_name(house_name: str) -> int:
 
         # The SQL query used to find the house_id
         house_query = """
-            SELECT house_id FROM Houses WHERE house_name = %s;"""
+        SELECT house_id FROM Houses WHERE house_name = %s;
+        """
         cursor.execute(house_query, (house_name,))
         house_id = cursor.fetchone()
 
@@ -47,7 +48,9 @@ def get_house_name_from_id(house_id: int) -> str:
         cursor = db_connection.cursor()
 
         # The SQL query used to find the house_name
-        house_query = "SELECT house_name from Houses WHERE house_id = %s;" % (
+        house_query = """
+        SELECT house_name from Houses WHERE house_id = %s;
+        """ % (
             house_id
         )
         cursor.execute(house_query)
@@ -81,8 +84,9 @@ def get_professor_id_from_name(first_name: str, last_name: str) -> int:
 
         # The SQL query used to find the professor_id
         professor_query = """
-            SELECT professor_id FROM Professors WHERE first_name = %s
-            AND last_name = %s;"""
+        SELECT professor_id FROM Professors WHERE first_name = %s
+        AND last_name = %s;
+        """
         cursor.execute(
             professor_query,
             (
@@ -119,8 +123,9 @@ def get_professor_name_from_id(professor_id: int) -> str:
 
         # The SQL query used to find the professor_name
         professor_query = """
-            SELECT first_name, last_name from Professors
-            WHERE professor_id = %s;""" % (
+        SELECT first_name, last_name from Professors
+        WHERE professor_id = %s;
+        """ % (
             professor_id
         )
         cursor.execute(professor_query)
@@ -154,7 +159,8 @@ def get_subject_id_from_name(subject_name: str) -> int:
 
         # The SQL query used to find the subject_id
         subject_query = """
-            SELECT subject_id FROM Subjects WHERE subject_name = %s;"""
+        SELECT subject_id FROM Subjects WHERE subject_name = %s;
+        """
         cursor.execute(subject_query, (subject_name,))
         subject_id = cursor.fetchone()
 
@@ -185,7 +191,8 @@ def get_subject_name_from_id(subject_id: int) -> str:
 
         # The SQL query used to find the subject_name
         subject_query = """
-            SELECT subject_name from Subjects WHERE subject_id = %s;""" % (
+        SELECT subject_name from Subjects WHERE subject_id = %s;
+        """ % (
             subject_id
         )
         cursor.execute(subject_query)
@@ -219,8 +226,9 @@ def get_student_id_from_name(first_name: str, last_name: str) -> int:
 
         # The SQL query used to find the student_id
         student_query = """
-            SELECT student_id FROM Students WHERE first_name = %s
-            AND last_name = %s;"""
+        SELECT student_id FROM Students WHERE first_name = %s
+        AND last_name = %s;
+        """
         cursor.execute(
             student_query,
             (
@@ -257,8 +265,9 @@ def get_student_name_from_id(student_id: int) -> str:
 
         # The SQL query used to find the student_name
         student_query = """
-            SELECT first_name, last_name from Students
-            WHERE student_id = %s;""" % (
+        SELECT first_name, last_name from Students
+        WHERE student_id = %s;
+        """ % (
             student_id
         )
         cursor.execute(student_query)
@@ -295,8 +304,9 @@ def get_class_id_from_class_detail(
 
         # The SQL query used to find the class_id
         class_query = """
-            SELECT class_id FROM Classes WHERE subject_id = %s
-            AND class_level = %s AND professor_id = %s;"""
+        SELECT class_id FROM Classes WHERE subject_id = %s
+        AND class_level = %s AND professor_id = %s;
+        """
         cursor.execute(
             class_query,
             (

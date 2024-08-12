@@ -65,8 +65,9 @@ def students():
 
             # Insert the new student data
             query = """
-                INSERT INTO Students (first_name, last_name, house_id,
-                level_attending) VALUES (%s, %s,%s,%s);"""
+            INSERT INTO Students (first_name, last_name, house_id,
+            level_attending) VALUES (%s, %s,%s,%s);
+            """
             cursor.execute(
                 query,
                 (
@@ -84,10 +85,11 @@ def students():
         # Handle GET requests
         elif request.method == "GET":
             query = """
-                SELECT Students.student_id, Students.first_name,
-                Students.last_name, Houses.house_name AS house_name,
-                Students.level_attending FROM Students LEFT JOIN Houses
-                ON Students.house_id = Houses.house_id;"""
+            SELECT Students.student_id, Students.first_name,
+            Students.last_name, Houses.house_name AS house_name,
+            Students.level_attending FROM Students LEFT JOIN Houses
+            ON Students.house_id = Houses.house_id;
+            """
             cursor.execute(query=query)
             students = cursor.fetchall()
 
@@ -226,8 +228,9 @@ def professors():
 
             # Insert the new professor data
             query = """
-                INSERT INTO Professors (first_name, last_name)
-                VALUES (%s, %s);"""
+            INSERT INTO Professors (first_name, last_name)
+            VALUES (%s, %s);
+            """
             cursor.execute(
                 query,
                 (
@@ -351,8 +354,9 @@ def houses():
 
         # Get professor names for the drop down menu choices
         query_professor_names = """
-            SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
-            AS professor_name FROM Professors;"""
+        SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
+        AS professor_name FROM Professors;
+        """
         cursor = db.execute_query(
             db_connection=db_connection, query=query_professor_names
         )
@@ -377,9 +381,10 @@ def houses():
 
             # Insert the new house data
             query = """
-                INSERT INTO Houses
-                    (head_of_house, house_name, house_animal, house_colors)
-                VALUES (%s, %s, %s, %s);"""
+            INSERT INTO Houses
+                (head_of_house, house_name, house_animal, house_colors)
+            VALUES (%s, %s, %s, %s);
+            """
             cursor.execute(
                 query,
                 (
@@ -397,12 +402,13 @@ def houses():
         # Handle GET requests
         elif request.method == "GET":
             query = """
-                SELECT Houses.house_id,
-                CONCAT(Professors.first_name, ' ', Professors.last_name)
-                AS head_of_house, Houses.house_name,
-                Houses.house_animal, Houses.house_colors
-                FROM Houses LEFT JOIN Professors
-                ON Houses.head_of_house = Professors.professor_id;"""
+            SELECT Houses.house_id,
+            CONCAT(Professors.first_name, ' ', Professors.last_name)
+            AS head_of_house, Houses.house_name,
+            Houses.house_animal, Houses.house_colors
+            FROM Houses LEFT JOIN Professors
+            ON Houses.head_of_house = Professors.professor_id;
+            """
             cursor = db.execute_query(db_connection=db_connection, query=query)
             houses = cursor.fetchall()
 
@@ -467,8 +473,9 @@ def edit_house(id: int):
 
         # Get professor names for dropdown menu choices
         query_professor_names = """
-            SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
-            AS professor_name FROM Professors;"""
+        SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
+        AS professor_name FROM Professors;
+        """
         cursor = db.execute_query(
             db_connection=db_connection, query=query_professor_names
         )
@@ -549,8 +556,9 @@ def subjects():
         if request.method == "POST":
             # Insert the new professor data
             query = """
-                INSERT INTO Subjects (subject_name, core_elective)
-                VALUES (%s, %s);"""
+            INSERT INTO Subjects (subject_name, core_elective)
+            VALUES (%s, %s);
+            """
             cursor.execute(
                 query,
                 (
@@ -671,8 +679,9 @@ def classes():
 
         # Get professor names to prefill dropdown choices
         query_professor_names = """
-            SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
-            AS professor_name FROM Professors;"""
+        SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
+        AS professor_name FROM Professors;
+        """
         cursor = db.execute_query(
             db_connection=db_connection, query=query_professor_names
         )
@@ -685,7 +694,8 @@ def classes():
 
         # Get subject names to prefill dropdown choices
         query_subject_names = """
-            SELECT Subjects.subject_name FROM Subjects;"""
+        SELECT Subjects.subject_name FROM Subjects;
+        """
         cursor = db.execute_query(
             db_connection=db_connection, query=query_subject_names
         )
@@ -713,8 +723,9 @@ def classes():
 
             # Insert the new class data
             query = """
-                INSERT INTO Classes (subject_id, professor_id, class_level)
-                VALUES (%s, %s, %s);"""
+            INSERT INTO Classes (subject_id, professor_id, class_level)
+            VALUES (%s, %s, %s);
+            """
             cursor.execute(
                 query,
                 (
@@ -731,14 +742,15 @@ def classes():
         # Handle GET requests
         elif request.method == "GET":
             query = """
-                SELECT Classes.class_id, Subjects.subject_name AS subject_name,
-                CONCAT(Professors.first_name, ' ', Professors.last_name)
-                AS professor_name, Classes.class_level
-                FROM Classes
-                LEFT JOIN Subjects
-                ON Classes.subject_id = Subjects.subject_id
-                LEFT JOIN Professors
-                ON Classes.professor_id = Professors.professor_id;"""
+            SELECT Classes.class_id, Subjects.subject_name AS subject_name,
+            CONCAT(Professors.first_name, ' ', Professors.last_name)
+            AS professor_name, Classes.class_level
+            FROM Classes
+            LEFT JOIN Subjects
+            ON Classes.subject_id = Subjects.subject_id
+            LEFT JOIN Professors
+            ON Classes.professor_id = Professors.professor_id;
+            """
             cursor.execute(query=query)
             classes = cursor.fetchall()
 
@@ -780,9 +792,10 @@ def edit_class(id: int):
         cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
 
         query = """
-            SELECT Classes.class_id, Classes.subject_id AS subject_name,
-            Classes.professor_id AS professor_name, Classes.class_level
-            FROM Classes WHERE class_id = %s;""" % (
+        SELECT Classes.class_id, Classes.subject_id AS subject_name,
+        Classes.professor_id AS professor_name, Classes.class_level
+        FROM Classes WHERE class_id = %s;
+        """ % (
             id
         )
         cursor.execute(
@@ -814,8 +827,9 @@ def edit_class(id: int):
 
         # Get professor names to prefill dropdown choices
         query_professor_names = """
-            SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
-            AS professor_name FROM Professors;"""
+        SELECT CONCAT(Professors.first_name, ' ', Professors.last_name)
+        AS professor_name FROM Professors;
+        """
         cursor = db.execute_query(
             db_connection=db_connection, query=query_professor_names
         )
@@ -828,7 +842,8 @@ def edit_class(id: int):
 
         # Get subject names to prefill dropdown choices
         query_subject_names = """
-            SELECT Subjects.subject_name FROM Subjects;"""
+        SELECT Subjects.subject_name FROM Subjects;
+        """
         cursor = db.execute_query(
             db_connection=db_connection, query=query_subject_names
         )
@@ -909,8 +924,9 @@ def registrations():
 
         # Get student names for prefilling data
         query_student_names = """
-            SELECT CONCAT(Students.first_name, ' ', Students.last_name)
-            AS student_name FROM Students;"""
+        SELECT CONCAT(Students.first_name, ' ', Students.last_name)
+        AS student_name FROM Students;
+        """
         cursor = db.execute_query(
             db_connection=db_connection, query=query_student_names
         )
@@ -922,12 +938,16 @@ def registrations():
         # Get class details for prefilling data
         query_class_details = """
         SELECT CONCAT(Subjects.subject_name, ', ', Classes.class_level, ', ',
-        Professors.first_name, ' ', Professors.last_name) AS class_detail
+        (CASE
+            WHEN Classes.professor_id IS NULL THEN 'None'
+            ELSE CONCAT(Professors.first_name, ' ', Professors.last_name)
+        END)) AS class_detail
         FROM Classes
         LEFT JOIN Subjects
         ON Classes.subject_id = Subjects.subject_id
         LEFT JOIN Professors
-        ON Classes.professor_id = Professors.professor_id;"""
+        ON Classes.professor_id = Professors.professor_id;
+        """
         cursor = db.execute_query(
             db_connection=db_connection, query=query_class_details
         )
@@ -942,21 +962,24 @@ def registrations():
         if request.method == "GET":
             # Display the table
             query = """
-                SELECT Class_Registrations.student_id,
-                CONCAT(Students.first_name, ' ', Students.last_name)
-                AS student_name, Class_Registrations.class_id,
-                Subjects.subject_name, Classes.class_level,
-                CONCAT(Professors.first_name, ' ', Professors.last_name)
-                AS professor_name
-                FROM Class_Registrations
-                LEFT JOIN Students
-                ON Class_Registrations.student_id = Students.student_id
-                LEFT JOIN Classes
-                ON Class_Registrations.class_id = Classes.class_id
-                LEFT JOIN Subjects
-                ON Classes.subject_id = Subjects.subject_id
-                LEFT JOIN Professors
-                ON Classes.professor_id = Professors.professor_id;"""
+            SELECT Class_Registrations.student_id,
+            CONCAT(Students.first_name, ' ', Students.last_name)
+            AS student_name, Class_Registrations.class_id,
+            Subjects.subject_name, Classes.class_level,
+            (CASE
+                WHEN Classes.professor_id IS NULL THEN 'None'
+                ELSE CONCAT(Professors.first_name, ' ', Professors.last_name)
+            END) AS class_detail
+            FROM Class_Registrations
+            LEFT JOIN Students
+            ON Class_Registrations.student_id = Students.student_id
+            LEFT JOIN Classes
+            ON Class_Registrations.class_id = Classes.class_id
+            LEFT JOIN Subjects
+            ON Classes.subject_id = Subjects.subject_id
+            LEFT JOIN Professors
+            ON Classes.professor_id = Professors.professor_id;
+            """
             cursor.execute(query)
             registrations = cursor.fetchall()
             values = {
@@ -977,7 +1000,7 @@ def registrations():
                 form.class_detail.data.split(", ")
             )
             subject_id = helpers.get_subject_id_from_name(subject_name)
-            if professor_name:
+            if professor_name != "None":
                 first_name, last_name = professor_name.split()
                 professor_id = helpers.get_professor_id_from_name(
                     first_name, last_name
@@ -1047,22 +1070,25 @@ def edit_registration(student_id: int, class_id: int):
         cursor = db_connection.cursor(MySQLdb.cursors.DictCursor)
 
         query = """
-            SELECT CONCAT(Students.first_name, ' ', Students.last_name)
-            AS student_name,
-            CONCAT(Subjects.subject_name, ', ', Classes.class_level, ', ',
-            Professors.first_name, ' ', Professors.last_name)
-            AS class_detail
-            FROM Class_Registrations
-            LEFT JOIN Students
-            ON Class_Registrations.student_id = Students.student_id
-            LEFT JOIN Classes
-            ON Class_Registrations.class_id = Classes.class_id
-            LEFT JOIN Subjects
-            ON Classes.subject_id = Subjects.subject_id
-            LEFT JOIN Professors
-            ON Classes.professor_id = Professors.professor_id
-            WHERE Class_Registrations.student_id = '%s' and
-            Class_Registrations.class_id = '%s'"""
+        SELECT CONCAT(Students.first_name, ' ', Students.last_name)
+        AS student_name,
+        CONCAT(Subjects.subject_name, ', ', Classes.class_level, ', ',
+        (CASE
+            WHEN Classes.professor_id IS NULL THEN 'None'
+            ELSE CONCAT(Professors.first_name, ' ', Professors.last_name)
+        END)) AS class_detail
+        FROM Class_Registrations
+        LEFT JOIN Students
+        ON Class_Registrations.student_id = Students.student_id
+        LEFT JOIN Classes
+        ON Class_Registrations.class_id = Classes.class_id
+        LEFT JOIN Subjects
+        ON Classes.subject_id = Subjects.subject_id
+        LEFT JOIN Professors
+        ON Classes.professor_id = Professors.professor_id
+        WHERE Class_Registrations.student_id = '%s' and
+        Class_Registrations.class_id = '%s'
+        """
         cursor.execute(query, (student_id, class_id))
         registration = cursor.fetchone()
 
@@ -1088,12 +1114,16 @@ def edit_registration(student_id: int, class_id: int):
         # Get class details for prefilling data
         query_class_details = """
         SELECT CONCAT(Subjects.subject_name, ', ', Classes.class_level, ', ',
-        Professors.first_name, ' ', Professors.last_name) AS class_detail
+        (CASE
+            WHEN Classes.professor_id IS NULL THEN 'None'
+            ELSE CONCAT(Professors.first_name, ' ', Professors.last_name)
+        END)) AS class_detail
         FROM Classes
         LEFT JOIN Subjects
         ON Classes.subject_id = Subjects.subject_id
         LEFT JOIN Professors
-        ON Classes.professor_id = Professors.professor_id;"""
+        ON Classes.professor_id = Professors.professor_id;
+        """
         cursor = db.execute_query(
             db_connection=db_connection, query=query_class_details
         )
@@ -1125,7 +1155,7 @@ def edit_registration(student_id: int, class_id: int):
                 form.class_detail.data.split(", ")
             )
             subject_id = helpers.get_subject_id_from_name(subject_name)
-            if professor_name:
+            if professor_name != "None":
                 first_name, last_name = professor_name.split()
                 professor_id = helpers.get_professor_id_from_name(
                     first_name, last_name
